@@ -2,12 +2,17 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
-
-	_ "github.com/teratron/seabattle/pkg/router"
+	//_ "github.com/teratron/seabattle/pkg/router"
 )
+
+type page struct {
+	Lang  string
+	Title string
+}
 
 func init() {
 	err := os.Setenv("PORT", "8080")
@@ -20,6 +25,7 @@ func main() {
 	fmt.Println("Sea Battle")
 
 	http.HandleFunc("/", indexHandler)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -36,8 +42,20 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	_, err := fmt.Fprint(w, "Hello, World!")
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+	page := &page{
+		Lang:  "en",
+		Title: "Sea Battle",
 	}
+	tmpl, err := template.ParseFiles("template/page.html",
+		"template/index.html",
+		"template/header.html",
+		"template/footer.html")
+	if err == nil {
+		err = tmpl.ExecuteTemplate(w, "page", page)
+	}
+	if err != nil {
+		//w.WriteHeader(http.StatusInternalServerError)
+		_, _ = fmt.Fprintf(w, err.Error())
+	}
+
 }

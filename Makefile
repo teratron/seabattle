@@ -6,10 +6,10 @@ BINS := seabattle
 REGISTRY ?= docker.pkg.github.com/teratron/seabattle
 
 # This version-strategy uses git tags to set the version string
-VERSION ?= $(shell git describe --tags --always --dirty)
+#VERSION ?= $(shell git describe --tags --always --dirty)
 
 # This version-strategy uses a manual value to set the version string
-#VERSION ?= 1.2.3
+VERSION ?= 0.0.1
 
 # Directories which hold app source (not vendored)
 SRC_DIRS := cmd pkg
@@ -241,3 +241,21 @@ help:
 			BEGIN {FS = ": *@HELP"};              \
 			{ printf "  %-20s %s\n", $$1, $$2 };  \
 		'
+
+.PHONY: fmt
+fmt: ## go fmt
+	$(call print-target)
+	go fmt ./...
+
+.PHONY: help
+help2:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST)   \
+	| sort                                                \
+	| awk '                                               \
+		BEGIN {FS = ":.*?## "};                           \
+		{ printf "\033[36m%-30s\033[0m %s\n", $$1, $$2 }; \
+	'
+
+define print-target
+    @printf "Executing target: \033[36m$@\033[0m\n"
+endef

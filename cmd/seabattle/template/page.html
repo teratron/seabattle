@@ -1,0 +1,14 @@
+{{ define "page" }}
+    <!DOCTYPE html>
+    <html lang="{{ .Lang }}">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ .Title }}</title>
+    </head>
+    <body>
+
+    {{ template "content" }}
+
+    </body>
+    </html>
+{{ end }}
