@@ -17,7 +17,16 @@ func init() {
 }
 
 func main() {
-	http.HandleFunc("/", handler.HomeHandler)
+	// Используется функция http.NewServeMux() для инициализации нового рутера.
+	mux := http.NewServeMux()
+
+	// HomeHandler регистрируется как обработчик для URL-шаблона "/".
+	mux.HandleFunc("/", handler.Home)
+
+	// AboutHandler регистрируется как обработчик для URL-шаблона "/about".
+	mux.HandleFunc("/about", handler.About)
+
+	mux.HandleFunc("/error", handler.Error)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -26,5 +35,5 @@ func main() {
 	}
 	log.Printf("Listening on port %s", port)
 	log.Printf("Open http://localhost:%s in the browser", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), mux))
 }
