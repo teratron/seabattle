@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	//"path/filepath"
 
 	"github.com/teratron/seabattle/cmd/seabattle/handler"
 	"github.com/teratron/seabattle/pkg/router"
@@ -29,7 +28,7 @@ func main() {
 	mux.HandleFunc("/", handler.Home)
 	mux.HandleFunc("/about", handler.About)
 	mux.HandleFunc("/error", handler.Error)
-	mux.HandleFileServer("/web/static")
+	mux.HandleFileServer("./web/static")
 
 	port := os.Getenv("PORT")
 	if port == "" {

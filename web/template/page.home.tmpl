@@ -3,7 +3,7 @@
     {{ template "header" . }}
     <main>
 
-        <img src="../static/img/favicon/favicon.png" width="128" alt=""/>
+        <img src="{{ .Path.img }}favicon/favicon.png" width="128" alt="favicon"/>
 
         <b>{{ .AttrBody.id }}</b>
         {{ range $key, $value := .AttrBody }}
@@ -13,8 +13,7 @@
         {{ end }}
 
         {{ block "sidebar" . }}id="{{ .AttrBody.id }}"{{ end }}
-        <section {{ template "sidebar" . }}>
-        </section>
+        <section {{ template "sidebar" . }}></section>
 
     </main>
     {{ template "footer" . }}

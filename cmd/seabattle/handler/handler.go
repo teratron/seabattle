@@ -37,7 +37,15 @@ type Data struct {
 
 	// List of attributes attached to the <body> tag
 	AttrBody map[string]string
+
+	// List of static path
+	Path map[string]string
 }
+
+// Path static
+/*type Path struct {
+	Img, CSS, JS string
+}*/
 
 // Theme
 type Theme struct {

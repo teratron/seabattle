@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,7 +17,7 @@ func NewServeMux() *ServeMux {
 	return new(ServeMux)
 }
 
-// HandleFileServer инициализирет FileServer, он будет обрабатывать
+// HandleFileServer инициализирует FileServer, он будет обрабатывать
 // HTTP-запросы к статическим файлам из папки "./web/static".
 // Используем функцию mux.Handle() для регистрации обработчика для
 // всех запросов, которые начинаются с "/static/".
@@ -32,16 +33,19 @@ type FileSystem struct {
 }
 
 func (fs FileSystem) Open(path string) (file http.File, err error) {
+	fmt.Print(path, " - ")
 	file, err = fs.fs.Open(path)
 	if err == nil {
 		var info os.FileInfo
 		if info, err = file.Stat(); err == nil && info.IsDir() {
 			path = filepath.Join(path, "index.html")
 			if _, err = fs.fs.Open(path); err != nil {
-				err = file.Close()
+
 			}
+			err = file.Close()
 		}
 	}
+	fmt.Println(file, err)
 	return
 }
 

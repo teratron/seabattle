@@ -30,6 +30,16 @@ func Home(w http.ResponseWriter, r *http.Request) {
 				"id":    "home",
 				"class": "home",
 			},
+			Path: map[string]string{
+				"img": "../static/img/",
+				"css": "../static/css/",
+				"js":  "../static/js/",
+			},
+			/*Path: Path{
+				Img: "../static/img/",
+				CSS: "../static/css/",
+				JS:  "../static/js/",
+			},*/
 		},
 		files: []string{
 			filepath.Join(PathDirTemplate, "page.home.tmpl"),
