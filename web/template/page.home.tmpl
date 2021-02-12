@@ -1,0 +1,21 @@
+{{ template "base" . }}
+{{ define "content" }}
+    {{ template "header" . }}
+    <main>
+
+        <img src="../static/img/favicon/favicon.png" width="128" alt=""/>
+
+        <b>{{ .AttrBody.id }}</b>
+        {{ range $key, $value := .AttrBody }}
+            {{ $key }}="{{ $value }}"
+            {{ block "attr" $key }}{{ end }}
+            <b {{ template "attr" . }}>{{ $key }}</b>
+        {{ end }}
+
+        {{ block "sidebar" . }}id="{{ .AttrBody.id }}"{{ end }}
+        <section {{ template "sidebar" . }}>
+        </section>
+
+    </main>
+    {{ template "footer" . }}
+{{ end }}

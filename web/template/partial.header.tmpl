@@ -1,0 +1,19 @@
+{{ define "header" }}
+    <header>
+        <menu>
+            <li>{{ if eq .AttrBody.id "home" }}
+                    <b>Home</b>
+                {{ else }}
+                    <a href="/">Home</a>
+                {{ end }}
+            </li>
+            <li>
+                {{ if eq .AttrBody.id "about" }}
+                    <b>About</b>
+                {{ else }}
+                    <a href="/about">About</a>
+                {{ end }}
+            </li>
+        </menu>
+    </header>
+{{ end }}

@@ -1,20 +1,63 @@
 package router
 
 import (
-	"io"
-	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
-// HandlerFunc is a function type that implements the Handler interface.
+// ServeMux is an HTTP request multiplexer
+type ServeMux struct {
+	http.ServeMux
+}
+
+// NewServeMux() инициализация нового рутера.
+func NewServeMux() *ServeMux {
+	return new(ServeMux)
+}
+
+// HandleFileServer инициализирет FileServer, он будет обрабатывать
+// HTTP-запросы к статическим файлам из папки "./web/static".
+// Используем функцию mux.Handle() для регистрации обработчика для
+// всех запросов, которые начинаются с "/static/".
+func (mux *ServeMux) HandleFileServer(path string) {
+	p := "/" + filepath.Base(path)
+	mux.Handle(p, http.NotFoundHandler())
+	mux.Handle(p+"/", http.StripPrefix(p, http.FileServer(FileSystem{http.Dir(path)})))
+}
+
+// FileSystem is a customizable struct type that implements the http.FileSystem interface.
+type FileSystem struct {
+	fs http.FileSystem
+}
+
+func (fs FileSystem) Open(path string) (file http.File, err error) {
+	file, err = fs.fs.Open(path)
+	if err == nil {
+		var info os.FileInfo
+		if info, err = file.Stat(); err == nil && info.IsDir() {
+			path = filepath.Join(path, "index.html")
+			if _, err = fs.fs.Open(path); err != nil {
+				err = file.Close()
+			}
+		}
+	}
+	return
+}
+
+// DownloadHandler
+func DownloadHandler(w http.ResponseWriter, r *http.Request, name string) {
+	http.ServeFile(w, r, filepath.Clean(name))
+}
+
+// HandlerFunc is a function type that implements the http.Handler interface.
 type HandlerFunc func(http.ResponseWriter, *http.Request)
 
-//
 func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h(w, r)
 }
 
-var (
+/*var (
 	NotFoundHandler       = StatusHandler(http.StatusNotFound)
 	NotLegalHandler       = StatusHandler(451)
 	NotImplementedHandler = StatusHandler(501)
@@ -30,12 +73,12 @@ func (s StatusHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if _, err := io.WriteString(w, http.StatusText(code)); err != nil {
 		log.Println(err)
 	}
-}
+}*/
 
 // ClientFunc is a function type that implements the Client interface.
-type ClientFunc func(*http.Request) (*http.Response, error)
+//type ClientFunc func(*http.Request) (*http.Response, error)
 
 // Do does the request
-func (c ClientFunc) Do(r *http.Request) (*http.Response, error) {
+/*func (c ClientFunc) Do(r *http.Request) (*http.Response, error) {
 	return c(r)
-}
+}*/

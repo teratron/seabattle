@@ -4,44 +4,46 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"path/filepath"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
+		//http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
-	data := &Layout{
-		Name:        "Sea Battle",
-		Lang:        "en",
-		Description: "Sea Battle - multiplayer online game",
-		Author:      "Oleg Alexandrov",
-		Keyword:     "SeaBattle,Sea,Battle,Multiplayer,Online,Game",
-		Title:       "Sea Battle - Home",
+	layout := &Layout{
+		data: Data{
+			Name:        "home",
+			Lang:        "en",
+			Description: "Sea Battle - multiplayer online game",
+			Author:      "Oleg Alexandrov",
+			Keyword:     "SeaBattle,Sea,Battle,Multiplayer,Online,Game",
+			Title:       "Sea Battle - Home",
+			Theme:       "dark",
+
+			AttrHTML: map[string]string{
+				"class": "",
+			},
+			AttrBody: map[string]string{
+				"id":    "home",
+				"class": "home",
+			},
+		},
+		files: []string{
+			filepath.Join(PathDirTemplate, "page.home.tmpl"),
+			filepath.Join(PathDirTemplate, "partial.header.tmpl"),
+			filepath.Join(PathDirTemplate, "partial.footer.tmpl"),
+			filepath.Join(PathDirTemplate, "layout.base.tmpl"),
+		},
 	}
-	files := []string{
-		"./template/page.home.tmpl",
-		"./template/partial.header.tmpl",
-		"./template/partial.footer.tmpl",
-		"./template/layout.base.tmpl",
-	}
-	tmpl, err := template.ParseFiles(files...)
+	tmpl, err := template.ParseFiles(layout.files...)
 	if err == nil {
-		err = tmpl.Execute(w, data)
+		err = tmpl.Execute(w, layout.data)
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = fmt.Fprintf(w, err.Error())
 	}
-	/*tmpl, err := template.ParseFiles("template/base.layout.tmpl",
-		"template/home.page.tmpl",
-		"template/header.partial.tmpl",
-		"template/footer.partial.tmpl")
-	if err == nil {
-		err = tmpl.ExecuteTemplate(w, "base", data)
-	}
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprintf(w, err.Error())
-	}*/
 }
