@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,25 +11,30 @@ import (
 	"github.com/teratron/seabattle/pkg/router"
 )
 
-//
-type ServeMux struct {
-	http.ServeMux
-}
-
 func init() {
 	if err := os.Setenv("PORT", "8080"); err != nil {
 		log.Println(err)
 	}
 }
 
-func main() {
-	// Используется функция http.NewServeMux() для инициализации нового рутера.
-	mux := router.NewServeMux()
+type Config struct {
+	Addr      string
+	StaticDir string
+}
 
-	mux.HandleFunc("/", handler.Home)
-	mux.HandleFunc("/about", handler.About)
-	mux.HandleFunc("/error", handler.Error)
-	mux.HandleFileServer("./web/static")
+func main() {
+	cfg := new(Config)
+	flag.StringVar(&cfg.Addr, "addr", ":4000", "HTTP network address")
+	flag.StringVar(&cfg.StaticDir, "static-dir", "./ui/static", "Path to static assets")
+	flag.Parse()
+
+	// Используется функция http.NewServeMux() для инициализации нового рутера.
+	r := router.NewRouter()
+
+	r.HandleFunc("/", handler.Home)
+	r.HandleFunc("/about", handler.About)
+	r.HandleFunc("/error", handler.Error)
+	r.HandleFileServer("./web/static")
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -37,5 +43,5 @@ func main() {
 	}
 	log.Printf("Listening on port %s", port)
 	log.Printf("Open http://localhost:%s in the browser", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), mux))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), r))
 }

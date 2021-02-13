@@ -7,45 +7,46 @@ import (
 	"path/filepath"
 )
 
-// ServeMux is an HTTP request multiplexer
-type ServeMux struct {
+// Router is an HTTP request multiplexer
+type Router struct {
 	http.ServeMux
+	fs http.FileSystem
 }
 
-// NewServeMux() инициализация нового рутера.
-func NewServeMux() *ServeMux {
-	return new(ServeMux)
+// NewRouter() инициализация нового рутера.
+func NewRouter() *Router {
+	return new(Router)
 }
 
 // HandleFileServer инициализирует FileServer, он будет обрабатывать
 // HTTP-запросы к статическим файлам из папки "./web/static".
 // Используем функцию mux.Handle() для регистрации обработчика для
 // всех запросов, которые начинаются с "/static/".
-func (mux *ServeMux) HandleFileServer(path string) {
+func (r *Router) HandleFileServer(path string) {
+	r.fs = http.Dir(path)
 	p := "/" + filepath.Base(path)
-	mux.Handle(p, http.NotFoundHandler())
-	mux.Handle(p+"/", http.StripPrefix(p, http.FileServer(FileSystem{http.Dir(path)})))
+	r.Handle(p, http.NotFoundHandler())
+	r.Handle(p+"/", http.StripPrefix(p, http.FileServer(r)))
 }
 
-// FileSystem is a customizable struct type that implements the http.FileSystem interface.
-type FileSystem struct {
-	fs http.FileSystem
-}
-
-func (fs FileSystem) Open(path string) (file http.File, err error) {
-	fmt.Print(path, " - ")
-	file, err = fs.fs.Open(path)
+// Проверяем присутсвует файл index.html
+// Open implements the Router to http.FileSystem interface.
+func (r *Router) Open(path string) (file http.File, err error) {
+	fmt.Println(path, " - ")
+	file, err = r.fs.Open(path)
 	if err == nil {
+		fmt.Println("++++ 1", file, err)
 		var info os.FileInfo
 		if info, err = file.Stat(); err == nil && info.IsDir() {
-			path = filepath.Join(path, "index.html")
-			if _, err = fs.fs.Open(path); err != nil {
-
+			fmt.Println("++++ 2", file, err)
+			path = path + "index.html" //filepath.Join(path, "index.html")
+			if _, err = r.fs.Open(path); err != nil {
+				fmt.Println("++++ 3", file, err)
+				return file, file.Close()
 			}
-			err = file.Close()
 		}
 	}
-	fmt.Println(file, err)
+	fmt.Println("++++ 4", file, err)
 	return
 }
 

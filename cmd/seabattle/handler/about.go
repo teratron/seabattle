@@ -32,10 +32,10 @@ func About(w http.ResponseWriter, r *http.Request) {
 			},
 		},
 		files: []string{
-			filepath.Join(PathDirTemplate, "page.about.tmpl"),
-			filepath.Join(PathDirTemplate, "partial.header.tmpl"),
-			filepath.Join(PathDirTemplate, "partial.footer.tmpl"),
-			filepath.Join(PathDirTemplate, "layout.base.tmpl"),
+			filepath.Join(PathTemplateDir, "page.about.tmpl"),
+			filepath.Join(PathTemplateDir, "partial.header.tmpl"),
+			filepath.Join(PathTemplateDir, "partial.footer.tmpl"),
+			filepath.Join(PathTemplateDir, "layout.base.tmpl"),
 		},
 	}
 	tmpl, err := template.ParseFiles(layout.files...)

@@ -7,9 +7,9 @@ import (
 )
 
 var (
-	PathDirWeb      = filepath.Join("web")
-	PathDirStatic   = filepath.Join(PathDirWeb, "static")
-	PathDirTemplate = filepath.Join(PathDirWeb, "template")
+	PathWebDir      = filepath.Join("./web")
+	PathStaticDir   = filepath.Join(PathWebDir, "static")
+	PathTemplateDir = filepath.Join(PathWebDir, "template")
 )
 
 // Layout
@@ -77,10 +77,10 @@ func Index() *Layout {
 			},
 		},
 		files: []string{
-			filepath.Join(PathDirTemplate, "page.home.tmpl"),
-			filepath.Join(PathDirTemplate, "partial.header.tmpl"),
-			filepath.Join(PathDirTemplate, "partial.footer.tmpl"),
-			filepath.Join(PathDirTemplate, "layout.base.tmpl"),
+			filepath.Join(PathTemplateDir, "page.home.tmpl"),
+			filepath.Join(PathTemplateDir, "partial.header.tmpl"),
+			filepath.Join(PathTemplateDir, "partial.footer.tmpl"),
+			filepath.Join(PathTemplateDir, "layout.base.tmpl"),
 		},
 	}
 }
