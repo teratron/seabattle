@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	PathWebDir      = filepath.Join("./web")
+	PathWebDir      = filepath.Join(".", "web")
 	PathStaticDir   = filepath.Join(PathWebDir, "static")
 	PathTemplateDir = filepath.Join(PathWebDir, "template")
 )

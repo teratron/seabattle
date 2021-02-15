@@ -5,11 +5,18 @@ import (
 )
 
 // Config is global object that holds all application level variables.
-var Config appConfig
+//var zConfig Config
 
-type appConfig struct {
+type Config struct {
 	// Example Variable
-	ConfigVar string
+	//ConfigVar string
+
+	Addr      string
+	StaticDir string
+}
+
+func New() *Config {
+	return &Config{}
 }
 
 // LoadConfig loads config from files
