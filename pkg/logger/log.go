@@ -5,6 +5,10 @@ import (
 	"os"
 )
 
+type Logger struct {
+	Info, Warning, Error, Debug *log.Logger
+}
+
 var Info = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 
 //

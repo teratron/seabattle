@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/teratron/seabattle/cmd/seabattle/handler"
-	"github.com/teratron/seabattle/pkg/router"
+	"github.com/teratron/seabattle/pkg/server"
 	"log"
 	"os"
 
@@ -48,36 +48,12 @@ func main() {
 		infoLog:  log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
 	}*/
 
-	// New для инициализации нового рутера.
-	/*r := router.New()
+	srv := server.New(cfg.Addr)
 
-	r.HandleFunc("/", handler.Home)
-	r.HandleFunc("/about", handler.About)
-	r.HandleFunc("/error", handler.Error)
-	r.HandleFileServer("./web/static")
-
-	srv := server.New(cfg.Addr, r)
-	log.Fatal(srv.Run())*/
-
-	r := router.NewS(cfg.Addr)
-
-	r.HandleFunc("/", handler.Home)
-	r.HandleFunc("/about", handler.About)
-	r.HandleFunc("/error", handler.Error)
-	r.HandleFileServer("./web/static")
-
-	log.Fatal(r.Run())
-
-	/*srv := router.NewS(cfg.Addr)
-	//fmt.Println(srv.Addr, srv)
 	srv.HandleFunc("/", handler.Home)
-	log.Fatal(srv.Run())*/
+	srv.HandleFunc("/about", handler.About)
+	srv.HandleFunc("/error", handler.Error)
+	srv.HandleFileServer("./web/static")
 
-	/*infoLog.Printf("Listening on port %s", cfg.Addr)
-	infoLog.Printf("Open http://localhost:%s in the browser", cfg.Addr)
-	errorLog.Fatal(srv.ListenAndServe())*/
-
-	/*log.Printf("Listening on port %s", port)
-	log.Printf("Open http://localhost:%s in the browser", port)
-	errorLog.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), r))*/
+	log.Fatal(srv.Run())
 }
