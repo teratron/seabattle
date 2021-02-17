@@ -36,11 +36,6 @@ func Home(w http.ResponseWriter, r *http.Request) {
 				"css": "../static/css/",
 				"js":  "../static/js/",
 			},
-			/*Path: Path{
-				Img: "../static/img/",
-				CSS: "../static/css/",
-				JS:  "../static/js/",
-			},*/
 		},
 		files: []string{
 			filepath.Join(PathTemplateDir, "page.home.tmpl"),
