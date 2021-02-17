@@ -3,7 +3,6 @@ package app
 import (
 	"flag"
 	"log"
-	"os/exec"
 	"sync"
 
 	"github.com/teratron/seabattle/cmd/seabattle/handler"
@@ -17,17 +16,17 @@ type Application struct {
 	cfg      *config.Config
 	log      *logger.Logger
 	settings *settings
-	mutex    sync.Mutex
-	exec     func(string, ...string) *exec.Cmd
+	mu       sync.Mutex
 }
 
+// New
 func New() *Application {
 	app := &Application{
 		srv:      &server.Server{},
 		cfg:      config.New(),
 		log:      logger.New(),
 		settings: &settings{},
-		mutex:    sync.Mutex{},
+		mu:       sync.Mutex{},
 	}
 	flag.StringVar(&app.cfg.Addr, "addr", "localhost:8081", "HTTP network address")
 	flag.StringVar(&app.cfg.StaticDir, "static-dir", "./web/static", "Path to static assets")
@@ -35,14 +34,15 @@ func New() *Application {
 	return app
 }
 
+// Server
 func (app *Application) Server(addr string) {
 	app.cfg.Addr = addr
 	app.srv = server.New(addr)
-	app.srv.Server.ErrorLog = app.log.Error
+	app.srv.ErrorLog = app.log.Error
 
 	app.handle()
 
-	app.log.Info.Printf("Listening on port %s", addr)
+	app.log.Info.Printf("Listening on port %s", server.DividePortFromAddr(addr))
 	app.log.Info.Printf("Open http://%s in the browser", addr)
 	log.Fatal(app.srv.Run())
 }
@@ -54,6 +54,7 @@ func (app *Application) handle() {
 	app.srv.HandleFileServer("./web/static")
 }
 
+// Theme
 func (app *Application) Theme() string {
 	return app.settings.theme
 }

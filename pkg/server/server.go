@@ -4,12 +4,13 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Server struct {
 	http.Server
 	http.ServeMux
-	fs http.FileSystem
+	http.FileSystem
 }
 
 // New инициализация нового Server.
@@ -25,7 +26,7 @@ func New(addr string) *Server {
 
 // Run
 func (srv *Server) Run() error {
-	return srv.Server.ListenAndServe()
+	return srv.ListenAndServe()
 }
 
 func (srv *Server) Address() string {
@@ -37,7 +38,7 @@ func (srv *Server) Address() string {
 // Используем функцию Handle() для регистрации обработчика для
 // всех запросов, которые начинаются с паттерна (например "/static/").
 func (srv *Server) HandleFileServer(path string) {
-	srv.fs = http.Dir(path)
+	srv.FileSystem = http.Dir(path)
 	p := "/" + filepath.Base(path)
 	srv.Handle(p, http.NotFoundHandler())
 	srv.Handle(p+"/", http.StripPrefix(p, http.FileServer(srv)))
@@ -46,15 +47,28 @@ func (srv *Server) HandleFileServer(path string) {
 // Open implements the Server to http.FileSystem interface.
 // Проверяем присутсвует файл index.html в статических папках.
 func (srv *Server) Open(path string) (file http.File, err error) {
-	file, err = srv.fs.Open(path)
+	file, err = srv.FileSystem.Open(path)
 	if err == nil {
 		var info os.FileInfo
 		if info, err = file.Stat(); err == nil && info.IsDir() {
-			if _, err = srv.fs.Open(path + "index.html"); err != nil {
+			if _, err = srv.FileSystem.Open(path + "index.html"); err != nil {
 				if file.Close() != nil {
 					return nil, err
 				}
 			}
+		}
+	}
+	return
+}
+
+// DividePortFromAddr
+func DividePortFromAddr(addr string) (port string) {
+	index := strings.Index(addr, ":")
+	if index > -1 && index < len(addr)-1 {
+		split := strings.Split(addr, ":")
+		index = len(split)
+		if index > 0 {
+			port = split[index-1]
 		}
 	}
 	return

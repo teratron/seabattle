@@ -42,47 +42,8 @@ type Data struct {
 	Path map[string]string
 }
 
-// Path static
-/*type Path struct {
-	Img, CSS, JS string
-}*/
-
-// Theme
-type Theme struct {
-	name string
-}
-
 func (l *Layout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprint(w, l.data, r)
-}
-
-// Index
-func Index() *Layout {
-	return &Layout{
-		data: Data{
-			Name:        "Sea Battle",
-			Lang:        "en",
-			Description: "Sea Battle - multiplayer online game",
-			Author:      "Oleg Alexandrov",
-			Keyword:     "SeaBattle,Sea,Battle,Multiplayer,Online,Game",
-			Title:       "Sea Battle - Home",
-			Theme:       "default",
-
-			AttrHTML: map[string]string{
-				"class": "home",
-			},
-			AttrBody: map[string]string{
-				"id":    "home",
-				"class": "home",
-			},
-		},
-		files: []string{
-			filepath.Join(PathTemplateDir, "page.home.tmpl"),
-			filepath.Join(PathTemplateDir, "partial.header.tmpl"),
-			filepath.Join(PathTemplateDir, "partial.footer.tmpl"),
-			filepath.Join(PathTemplateDir, "layout.base.tmpl"),
-		},
-	}
 }
 
 /*func init() {
