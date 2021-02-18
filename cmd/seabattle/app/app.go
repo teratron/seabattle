@@ -1,7 +1,6 @@
 package app
 
 import (
-	"flag"
 	"log"
 	"sync"
 
@@ -22,28 +21,24 @@ type Application struct {
 // New
 func New() *Application {
 	app := &Application{
-		srv:      &server.Server{},
+		srv:      server.New(),
 		cfg:      config.New(),
 		log:      logger.New(),
 		settings: &settings{},
 		mu:       sync.Mutex{},
 	}
-	flag.StringVar(&app.cfg.Addr, "addr", "localhost:8081", "HTTP network address")
-	flag.StringVar(&app.cfg.StaticDir, "static-dir", "./web/static", "Path to static assets")
-	flag.Parse()
+	app.srv.Config = app.cfg
+	app.srv.Logger = app.log
+	app.srv.ErrorLog = app.log.Error
 	return app
 }
 
 // Server
-func (app *Application) Server(addr string) {
-	app.cfg.Addr = addr
-	app.srv = server.New(addr)
-	app.srv.ErrorLog = app.log.Error
-
+func (app *Application) Server() {
+	//app.srv.Creat()
 	app.handle()
-
-	app.log.Info.Printf("Listening on port %s", server.DividePortFromAddr(addr))
-	app.log.Info.Printf("Open http://%s in the browser", addr)
+	app.log.Info.Printf("Listening on port %s", app.cfg.Server.Port)
+	app.log.Info.Printf("Open http://%s in the browser", app.cfg.Server.Addr)
 	log.Fatal(app.srv.Run())
 }
 

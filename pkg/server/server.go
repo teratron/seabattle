@@ -4,24 +4,38 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
+
+	"github.com/teratron/seabattle/pkg/config"
+	"github.com/teratron/seabattle/pkg/logger"
 )
+
+// DefaultAddr
+const DefaultAddr = "localhost:8080"
 
 type Server struct {
 	http.Server
 	http.ServeMux
 	http.FileSystem
+
+	*config.Config
+	*logger.Logger
 }
 
 // New инициализация нового Server.
-func New(addr string) *Server {
-	srv := &Server{
-		Server: http.Server{
-			Addr: addr,
-		},
+func New(addr ...string) *Server {
+	srv := new(Server)
+	if len(addr) > 0 {
+		srv.Addr = addr[0]
+	} else {
+		srv.Addr = DefaultAddr
 	}
 	srv.Server.Handler = srv
 	return srv
+}
+
+// Creat
+func (srv *Server) Creat() {
+
 }
 
 // Run
@@ -29,19 +43,15 @@ func (srv *Server) Run() error {
 	return srv.ListenAndServe()
 }
 
-func (srv *Server) Address() string {
-	return srv.Addr
-}
-
-// HandleFileServer инициализирует http.FileServer, который будет обрабатывать
-// HTTP-запросы к статическим файлам из папки (например "./web/static").
+// HandleFileServer initializes http.FileServer, that will handle
+// HTTP-requests to static files from a folder (for example "./web/static").
 // Используем функцию Handle() для регистрации обработчика для
 // всех запросов, которые начинаются с паттерна (например "/static/").
 func (srv *Server) HandleFileServer(path string) {
 	srv.FileSystem = http.Dir(path)
-	p := "/" + filepath.Base(path)
-	srv.Handle(p, http.NotFoundHandler())
-	srv.Handle(p+"/", http.StripPrefix(p, http.FileServer(srv)))
+	pattern := "/" + filepath.Base(path)
+	srv.Handle(pattern, http.NotFoundHandler())
+	srv.Handle(pattern+"/", http.StripPrefix(pattern, http.FileServer(srv)))
 }
 
 // Open implements the Server to http.FileSystem interface.
@@ -62,7 +72,7 @@ func (srv *Server) Open(path string) (file http.File, err error) {
 }
 
 // DividePortFromAddr
-func DividePortFromAddr(addr string) (port string) {
+/*func DividePortFromAddr(addr string) (port string) {
 	index := strings.Index(addr, ":")
 	if index > -1 && index < len(addr)-1 {
 		split := strings.Split(addr, ":")
@@ -72,4 +82,4 @@ func DividePortFromAddr(addr string) (port string) {
 		}
 	}
 	return
-}
+}*/

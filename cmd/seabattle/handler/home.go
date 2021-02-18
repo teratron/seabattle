@@ -29,7 +29,6 @@ func Home(w http.ResponseWriter, r *http.Request) {
 			AttrBody: map[string]string{
 				"id":    "home",
 				"class": "home",
-				"attr":  "color=red",
 			},
 			Path: map[string]string{
 				"img": "../static/img/",

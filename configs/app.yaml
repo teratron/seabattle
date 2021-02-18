@@ -1,5 +1,5 @@
 application: seabattle
-version: 1
+version: 0.0.1
 runtime: go115
 api_version: go1
 
