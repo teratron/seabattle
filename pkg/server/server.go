@@ -33,17 +33,16 @@ type Server struct {
 // New инициализация нового Server.
 func New(addr ...string) *Server {
 	srv := new(Server)
-	srv.Config = new(config.Config)
-	srv.Logger = new(logger.Logger)
+	//srv.Config = new(config.Config)
+	//srv.Logger = new(logger.Logger)
 
 	if len(addr) > 0 {
 		srv.Addr = addr[0]
 	} else {
-		fmt.Println(srv.Config.File)
-		if err := srv.LoadConfig(filepath.Join(".", "configs", "config.yml")); err != nil {
+		/*if err := srv.LoadConfig(filepath.Join(".", "configs", "config.yml")); err != nil {
 			srv.Addr = DefaultAddr
-		}
-		//srv.Addr = DefaultAddr
+		}*/
+		srv.Addr = DefaultAddr
 	}
 	srv.Server.Handler = srv
 	return srv
@@ -52,6 +51,7 @@ func New(addr ...string) *Server {
 // LoadConfig
 func (srv *Server) LoadConfig(path string) (err error) {
 	err = srv.Decode(path)
+	fmt.Println(srv)
 	return
 }
 

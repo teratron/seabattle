@@ -36,10 +36,13 @@ func New() *Application {
 
 // Server
 func (app *Application) Server() {
-	_ = app.srv.LoadConfig(app.cfg.File)
-	fmt.Println(app)
+	//fmt.Println(app.cfg.File)
+	//err := app.srv.LoadConfig("./configs/config.yml")
+	/*err := app.srv.Decode(app.cfg.File)
+	fmt.Println(app, err)*/
 
 	app.handle()
+	fmt.Println(app.srv.ErrorLog, app.cfg, app.log.Error)
 	log.Fatal(app.srv.Run())
 }
 
