@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -35,10 +36,10 @@ func New() *Application {
 
 // Server
 func (app *Application) Server() {
-	//app.srv.Creat()
+	_ = app.srv.LoadConfig(app.cfg.File)
+	fmt.Println(app)
+
 	app.handle()
-	app.log.Info.Printf("Listening on port %s", app.cfg.Server.Port)
-	app.log.Info.Printf("Open http://%s in the browser", app.cfg.Server.Addr)
 	log.Fatal(app.srv.Run())
 }
 

@@ -8,10 +8,9 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
-
-	"gopkg.in/yaml.v2"
 )
 
 func init() {
@@ -46,17 +45,17 @@ func init() {
 }*/
 
 type Config struct {
-	Server Server `yaml:"server"`
+	File   string `yaml:"-"`
+	Server `yaml:"server"`
 }
 
 type Server struct {
-	Addr    string  `yaml:"-"`
-	Host    string  `yaml:"host"`
-	Port    string  `yaml:"port"`
-	Timeout timeout `yaml:"timeout"`
+	Host    string `yaml:"host"`
+	Port    string `yaml:"port"`
+	Timeout `yaml:"timeout"`
 }
 
-type timeout struct {
+type Timeout struct {
 	Server time.Duration `yaml:"server"`
 	Read   time.Duration `yaml:"read"`
 	Write  time.Duration `yaml:"write"`
@@ -65,11 +64,11 @@ type timeout struct {
 
 func New() *Config {
 	cfg := &Config{
+		File: filepath.Join(".", "configs", "config.yml"),
 		Server: Server{
-			Addr: "localhost:8080",
-			Host: "127.0.0.1",
+			Host: "localhost",
 			Port: "8080",
-			Timeout: timeout{
+			Timeout: Timeout{
 				Server: 30,
 				Read:   15,
 				Write:  10,
@@ -79,20 +78,6 @@ func New() *Config {
 	}
 	//cfg.Server.Addr = cfg.Server.Host + ":" + cfg.Server.Port
 	return cfg
-}
-
-func (cfg *Config) decode(configPath string) error {
-	file, err := os.Open(configPath)
-	if err == nil {
-		defer func() {
-			err = file.Close()
-		}()
-		var info os.FileInfo
-		if info, err = file.Stat(); err == nil && !info.IsDir() {
-			err = yaml.NewDecoder(file).Decode(&cfg)
-		}
-	}
-	return err
 }
 
 func ValidateConfigPath(path string) error {

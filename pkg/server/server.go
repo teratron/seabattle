@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -9,8 +10,16 @@ import (
 	"github.com/teratron/seabattle/pkg/logger"
 )
 
-// DefaultAddr
-const DefaultAddr = "localhost:8080"
+const (
+	// DefaultAddr
+	DefaultAddr = "localhost:8080"
+
+	// DefaultHost
+	DefaultHost = "localhost"
+
+	// DefaultAddr
+	DefaultPort = "8080"
+)
 
 type Server struct {
 	http.Server
@@ -24,22 +33,32 @@ type Server struct {
 // New инициализация нового Server.
 func New(addr ...string) *Server {
 	srv := new(Server)
+	srv.Config = new(config.Config)
+	srv.Logger = new(logger.Logger)
+
 	if len(addr) > 0 {
 		srv.Addr = addr[0]
 	} else {
-		srv.Addr = DefaultAddr
+		fmt.Println(srv.Config.File)
+		if err := srv.LoadConfig(filepath.Join(".", "configs", "config.yml")); err != nil {
+			srv.Addr = DefaultAddr
+		}
+		//srv.Addr = DefaultAddr
 	}
 	srv.Server.Handler = srv
 	return srv
 }
 
-// Creat
-func (srv *Server) Creat() {
-
+// LoadConfig
+func (srv *Server) LoadConfig(path string) (err error) {
+	err = srv.Decode(path)
+	return
 }
 
 // Run
 func (srv *Server) Run() error {
+	srv.Info.Printf("Listening on port %s", srv.Config.Port)
+	srv.Info.Printf("Open http://%s in the browser", srv.Config.Host+":"+srv.Config.Port)
 	return srv.ListenAndServe()
 }
 
