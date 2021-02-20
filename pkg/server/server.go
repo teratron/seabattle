@@ -5,20 +5,11 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 
+	"github.com/teratron/seabattle/cmd/seabattle/handler"
 	"github.com/teratron/seabattle/pkg/config"
 	"github.com/teratron/seabattle/pkg/logger"
-)
-
-const (
-	// DefaultAddr
-	DefaultAddr = "localhost:8080"
-
-	// DefaultHost
-	DefaultHost = "localhost"
-
-	// DefaultAddr
-	DefaultPort = "8080"
 )
 
 type Server struct {
@@ -30,19 +21,13 @@ type Server struct {
 	*logger.Logger
 }
 
-// New инициализация нового Server.
+// New initializes a new Server.
 func New(addr ...string) *Server {
 	srv := new(Server)
-	//srv.Config = new(config.Config)
-	//srv.Logger = new(logger.Logger)
-
 	if len(addr) > 0 {
 		srv.Addr = addr[0]
 	} else {
-		/*if err := srv.LoadConfig(filepath.Join(".", "configs", "config.yml")); err != nil {
-			srv.Addr = DefaultAddr
-		}*/
-		srv.Addr = DefaultAddr
+		srv.Addr = "localhost:8080"
 	}
 	srv.Server.Handler = srv
 	return srv
@@ -50,22 +35,39 @@ func New(addr ...string) *Server {
 
 // LoadConfig
 func (srv *Server) LoadConfig(path string) (err error) {
+	//fmt.Println(srv.Config.File)
 	err = srv.Decode(path)
-	fmt.Println(srv)
+	if err == nil {
+		srv.Addr = srv.Config.Server.Host + ":" + strconv.Itoa(srv.Config.Server.Port)
+	}
 	return
+}
+
+func (srv *Server) handle() {
+	for _, v := range srv.Entry {
+		fmt.Println(v)
+	}
+	srv.HandleFunc("/", handler.Home)
+	srv.HandleFunc("/about", handler.About)
+	srv.HandleFunc("/error", handler.Error)
+	srv.HandleFileServer("./web/static")
 }
 
 // Run
 func (srv *Server) Run() error {
-	srv.Info.Printf("Listening on port %s", srv.Config.Port)
-	srv.Info.Printf("Open http://%s in the browser", srv.Config.Host+":"+srv.Config.Port)
+	srv.Info.Printf("Listening on port %d", srv.Port)
+	srv.Info.Printf("Open http://%s in the browser", srv.Addr)
+
+	//fmt.Println(srv.Info)
+	//srv.Warning.F()
+
 	return srv.ListenAndServe()
 }
 
 // HandleFileServer initializes http.FileServer, that will handle
-// HTTP-requests to static files from a folder (for example "./web/static").
+// HTTP-requests to static files from a folder (for example: "./web/static").
 // Используем функцию Handle() для регистрации обработчика для
-// всех запросов, которые начинаются с паттерна (например "/static/").
+// всех запросов, которые начинаются с паттерна (for example: "/static/").
 func (srv *Server) HandleFileServer(path string) {
 	srv.FileSystem = http.Dir(path)
 	pattern := "/" + filepath.Base(path)
@@ -76,8 +78,7 @@ func (srv *Server) HandleFileServer(path string) {
 // Open implements the Server to http.FileSystem interface.
 // Проверяем присутсвует файл index.html в статических папках.
 func (srv *Server) Open(path string) (file http.File, err error) {
-	file, err = srv.FileSystem.Open(path)
-	if err == nil {
+	if file, err = srv.FileSystem.Open(path); err == nil {
 		var info os.FileInfo
 		if info, err = file.Stat(); err == nil && info.IsDir() {
 			if _, err = srv.FileSystem.Open(path + "index.html"); err != nil {
@@ -89,16 +90,3 @@ func (srv *Server) Open(path string) (file http.File, err error) {
 	}
 	return
 }
-
-// DividePortFromAddr
-/*func DividePortFromAddr(addr string) (port string) {
-	index := strings.Index(addr, ":")
-	if index > -1 && index < len(addr)-1 {
-		split := strings.Split(addr, ":")
-		index = len(split)
-		if index > 0 {
-			port = split[index-1]
-		}
-	}
-	return
-}*/

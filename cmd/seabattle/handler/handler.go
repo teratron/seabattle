@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"fmt"
-	"net/http"
 	"path/filepath"
 )
 
@@ -42,10 +40,10 @@ type Data struct {
 	Path map[string]string
 }
 
-func (l *Layout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+/*func (l *Layout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprint(w, l.data, r)
 }
-
+*/
 /*func init() {
 	mux := http.NewServeMux()
 

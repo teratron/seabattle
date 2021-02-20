@@ -21,32 +21,38 @@ type Application struct {
 
 // New
 func New() *Application {
-	app := &Application{
+	return &Application{
 		srv:      server.New(),
 		cfg:      config.New(),
 		log:      logger.New(),
 		settings: &settings{},
 		mu:       sync.Mutex{},
 	}
-	app.srv.Config = app.cfg
-	app.srv.Logger = app.log
-	app.srv.ErrorLog = app.log.Error
-	return app
 }
 
 // Server
 func (app *Application) Server() {
-	//fmt.Println(app.cfg.File)
-	//err := app.srv.LoadConfig("./configs/config.yml")
-	/*err := app.srv.Decode(app.cfg.File)
-	fmt.Println(app, err)*/
+	app.srv.Config = app.cfg
+	app.srv.Logger = app.log
+	app.srv.ErrorLog = app.log.Error
+
+	//app.log.Warning =
+	_ = app.srv.LoadConfig("./configs/config.yml")
 
 	app.handle()
-	fmt.Println(app.srv.ErrorLog, app.cfg, app.log.Error)
+}
+
+// Run
+func (app *Application) Run() {
+	fmt.Println(app.cfg.Encode("./configs/config2.yml"))
 	log.Fatal(app.srv.Run())
 }
 
 func (app *Application) handle() {
+	/*for _, v := range app.cfg.Entry {
+		//fmt.Println(v)
+		app.srv.HandleFunc(v, handler.Home)
+	}*/
 	app.srv.HandleFunc("/", handler.Home)
 	app.srv.HandleFunc("/about", handler.About)
 	app.srv.HandleFunc("/error", handler.Error)

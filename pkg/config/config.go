@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strconv"
 	"syscall"
 	"time"
 )
@@ -37,22 +38,18 @@ func init() {
 	cfg.Run()*/
 }
 
-/*type Config struct {
-	// Example Variable
-	//ConfigVar string
-	//StaticDir string
-	Addr string
-}*/
-
 type Config struct {
-	File   string `yaml:"-"`
+	file   string
+	addr   string
 	Server `yaml:"server"`
+	Entry  []string `yaml:"entry"`
 }
 
 type Server struct {
 	Host    string `yaml:"host"`
-	Port    string `yaml:"port"`
+	Port    int    `yaml:"port"`
 	Timeout `yaml:"timeout"`
+	//Entry   `yaml:"entry"`
 }
 
 type Timeout struct {
@@ -62,21 +59,36 @@ type Timeout struct {
 	Idle   time.Duration `yaml:"idle"`
 }
 
+//type Entry map[string]string
+
 func New() *Config {
 	cfg := &Config{
-		File: filepath.Join(".", "configs", "config.yml"),
+		file: filepath.Join(".", "configs", "config.yml"),
+		addr: "localhost:8080",
 		Server: Server{
 			Host: "localhost",
-			Port: "8080",
+			Port: 8080,
 			Timeout: Timeout{
 				Server: 30,
 				Read:   15,
 				Write:  10,
 				Idle:   5,
 			},
+			//Entry: make(map[string]string),
+			/*Entry: map[string]string{
+				"/":        "home",
+				"/about":   "about",
+				"/error":   "error",
+				"/static":  "static",
+				"/static/": "static",
+			},*/
+		},
+		Entry: []string{
+			"/",
+			"/about",
+			"/error",
 		},
 	}
-	//cfg.Server.Addr = cfg.Server.Host + ":" + cfg.Server.Port
 	return cfg
 }
 
@@ -139,7 +151,7 @@ func (cfg Config) Run() {
 
 	// Define server options
 	server := &http.Server{
-		Addr:         cfg.Server.Host + ":" + cfg.Server.Port,
+		Addr:         cfg.Server.Host + ":" + strconv.Itoa(cfg.Server.Port),
 		Handler:      NewRouter(),
 		ReadTimeout:  cfg.Server.Timeout.Read * time.Second,
 		WriteTimeout: cfg.Server.Timeout.Write * time.Second,
@@ -173,21 +185,4 @@ func (cfg Config) Run() {
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatalf("Server was unable to gracefully shutdown due to err: %+v", err)
 	}
-}
-
-// LoadConfig loads config from files
-func LoadConfig(configPaths ...string) error {
-	/*v := viper.New()
-	v.SetConfigName("example")
-	v.SetConfigType("yaml")
-	v.SetEnvPrefix("blueprint")
-	v.AutomaticEnv()
-	for _, path := range configPaths {
-		v.AddConfigPath(path)
-	}
-	if err := v.ReadInConfig(); err != nil {
-		return fmt.Errorf("failed to read the configuration file: %s", err)
-	}
-	return v.Unmarshal(&Config)*/
-	return fmt.Errorf("failed to read the configuration file")
 }

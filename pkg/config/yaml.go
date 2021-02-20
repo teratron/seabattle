@@ -20,11 +20,27 @@ func (cfg *Config) Decode(path string) error {
 	return err
 }
 
-/*
-func (cfg *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
-	return nil
+func (cfg *Config) Encode(path string) error {
+	file, err := os.Create(path)
+	if err == nil {
+		defer func() {
+			err = file.Close()
+		}()
+		err = yaml.NewEncoder(file).Encode(&cfg)
+	}
+	return err
 }
 
+/*var un = func(v interface{}) error {
+	return nil
+}*/
+
+/*func (cfg *Config) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	err := unmarshal(cfg)
+	return err
+}*/
+
+/*
 func (d *decoder) callUnmarshaler(n *node, u Unmarshaler) (good bool) {
 	terrlen := len(d.terrors)
 	err := u.UnmarshalYAML(func(v interface{}) (err error) {
