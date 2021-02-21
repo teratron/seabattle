@@ -1,16 +1,7 @@
 package config
 
 import (
-	"context"
-	"flag"
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-	"os/signal"
 	"path/filepath"
-	"strconv"
-	"syscall"
 	"time"
 )
 
@@ -23,19 +14,6 @@ func init() {
 		port = "8080"
 		log.Printf("Defaulting to port %s", port)
 	}*/
-	// Generate our config based on the config supplied
-	// by the user in the flags
-	/*cfgPath, err := ParseFlags()
-	if err != nil {
-		log.Fatal(err)
-	}
-	cfg, err := NewConfig(cfgPath)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// Run the server
-	cfg.Run()*/
 }
 
 type Config struct {
@@ -63,7 +41,7 @@ type Timeout struct {
 
 func New() *Config {
 	cfg := &Config{
-		file: filepath.Join(".", "configs", "config.yml"),
+		file: filepath.Join("configs", "config.yml"),
 		addr: "localhost:8080",
 		Server: Server{
 			Host: "localhost",
@@ -92,7 +70,7 @@ func New() *Config {
 	return cfg
 }
 
-func ValidateConfigPath(path string) error {
+/*func ValidateConfigPath(path string) error {
 	s, err := os.Stat(path)
 	if err != nil {
 		return err
@@ -110,9 +88,8 @@ func ParseFlags() (string, error) {
 	// Set up a CLI flag called "-config" to allow users
 	// to supply the configuration file
 	flag.StringVar(&configPath, "config", "./configs/config.yml", "Path to config file")
-	/*flag.StringVar(&app.cfg.Addr, "addr", "localhost:8081", "HTTP network address")
-	flag.StringVar(&app.cfg.StaticDir, "static-dir", "./web/static", "Path to static assets")
-	flag.Parse()*/
+	//flag.StringVar(&app.cfg.Addr, "addr", "localhost:8081", "HTTP network address")
+	//flag.StringVar(&app.cfg.StaticDir, "static-dir", "./web/static", "Path to static assets")
 
 	// Actually parse the flags
 	flag.Parse()
@@ -185,4 +162,4 @@ func (cfg Config) Run() {
 	if err := server.Shutdown(ctx); err != nil {
 		log.Fatalf("Server was unable to gracefully shutdown due to err: %+v", err)
 	}
-}
+}*/

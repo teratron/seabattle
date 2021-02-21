@@ -22,7 +22,7 @@ ARCH := $(if $(GOARCH),$(GOARCH),$(shell go env GOARCH))
 TAG := $(VERSION)__$(OS)_$(ARCH)
 
 BASE_IMAGE ?= gcr.io/distroless/static
-BUILD_IMAGE ?= golang:1.15-alpine
+BUILD_IMAGE ?= golang:1.16-alpine
 
 BIN_EXTENSION :=
 ifeq ($(OS), windows)

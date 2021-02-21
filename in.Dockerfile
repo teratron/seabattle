@@ -10,7 +10,7 @@ ENTRYPOINT ["/${ARG_BIN}"]
 
 ################################################
 
-#FROM golang:1.15
+#FROM golang:1.16
 
 # Set the Current Working Directory inside the container
 #WORKDIR $GOPATH/src/github.com/teratron/goseabattle

@@ -13,13 +13,13 @@ type Logger struct {
 }
 
 func New() *Logger {
-	file, err := os.Create("./configs/warn.log")
+	/*file, err := os.Create("./configs/warn.log")
 	defer func() {
 		err = file.Close()
-	}()
+	}()*/
 	return &Logger{
 		Info:    log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
-		Warning: log.New(file, "WARNING\t", log.Ldate|log.Ltime|log.Lshortfile),
+		Warning: log.New(os.Stdout, "WARNING\t", log.Ldate|log.Ltime|log.Lshortfile),
 		Error:   log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
 		Debug:   log.New(os.Stderr, "DEBUG\t", log.Ldate|log.Ltime|log.Llongfile),
 	}

@@ -5,13 +5,6 @@ package server
 	http.ServeFile(w, r, filepath.Clean(name))
 }*/
 
-// HandlerFunc is a function type that implements the http.Handler interface.
-/*type HandlerFunc func(http.ResponseWriter, *http.Request)
-
-func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h(w, r)
-}*/
-
 /*var (
 	NotFoundHandler       = StatusHandler(http.StatusNotFound)
 	NotLegalHandler       = StatusHandler(451)

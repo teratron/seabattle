@@ -1,14 +1,18 @@
 package app
 
 import (
+	//_ "database/sql"
 	"fmt"
 	"log"
+	"path/filepath"
 	"sync"
 
 	"github.com/teratron/seabattle/cmd/seabattle/handler"
 	"github.com/teratron/seabattle/pkg/config"
 	"github.com/teratron/seabattle/pkg/logger"
 	"github.com/teratron/seabattle/pkg/server"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type Application struct {
@@ -37,14 +41,14 @@ func (app *Application) Server() {
 	app.srv.ErrorLog = app.log.Error
 
 	//app.log.Warning =
-	_ = app.srv.LoadConfig("./configs/config.yml")
+	_ = app.srv.LoadConfig(filepath.Join("configs", "config.yml"))
 
 	app.handle()
 }
 
 // Run
 func (app *Application) Run() {
-	fmt.Println(app.cfg.Encode("./configs/config2.yml"))
+	fmt.Println(app.cfg.Encode(filepath.Join("configs", "config2.yml")))
 	log.Fatal(app.srv.Run())
 }
 

@@ -7,6 +7,24 @@ import (
 )
 
 func (cfg *Config) Decode(path string) error {
+	file, err := os.OpenFile(path, os.O_RDONLY, 0)
+	if err == nil {
+		defer func() { err = file.Close() }()
+		err = yaml.NewDecoder(file).Decode(&cfg)
+	}
+	return err
+}
+
+func (cfg *Config) Encode(path string) error {
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	if err == nil {
+		defer func() { err = file.Close() }()
+		err = yaml.NewEncoder(file).Encode(&cfg)
+	}
+	return err
+}
+
+/*func (cfg *Config) Decode(path string) error {
 	file, err := os.Open(path)
 	if err == nil {
 		defer func() {
@@ -17,19 +35,9 @@ func (cfg *Config) Decode(path string) error {
 			err = yaml.NewDecoder(file).Decode(&cfg)
 		}
 	}
+	fmt.Println(err)
 	return err
-}
-
-func (cfg *Config) Encode(path string) error {
-	file, err := os.Create(path)
-	if err == nil {
-		defer func() {
-			err = file.Close()
-		}()
-		err = yaml.NewEncoder(file).Encode(&cfg)
-	}
-	return err
-}
+}*/
 
 /*var un = func(v interface{}) error {
 	return nil
