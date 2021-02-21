@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/teratron/seabattle/cmd/seabattle/handler"
 	"github.com/teratron/seabattle/pkg/config"
+	"github.com/teratron/seabattle/pkg/handler"
 	"github.com/teratron/seabattle/pkg/logger"
 )
 
@@ -41,16 +41,6 @@ func (srv *Server) LoadConfig(path string) (err error) {
 	return
 }
 
-func (srv *Server) handle() {
-	/*for _, v := range srv.Entry {
-		fmt.Println(v)
-	}*/
-	srv.HandleFunc("/", handler.Home)
-	srv.HandleFunc("/about", handler.About)
-	srv.HandleFunc("/error", handler.Error)
-	srv.HandleFileServer("./web/static")
-}
-
 // Run
 func (srv *Server) Run() error {
 	srv.Info.Printf("Listening on port %d", srv.Port)
@@ -58,11 +48,11 @@ func (srv *Server) Run() error {
 	return srv.ListenAndServe()
 }
 
-// HandleFileServer initializes http.FileServer, that will handle
+// HandleFile initializes http.FileServer, that will handle
 // HTTP-requests to static files from a folder (for example: "./web/static").
 // Используем функцию Handle() для регистрации обработчика для
 // всех запросов, которые начинаются с паттерна (for example: "/static/").
-func (srv *Server) HandleFileServer(path string) {
+func (srv *Server) HandleFile(path string) {
 	srv.FileSystem = http.Dir(path)
 	pattern := "/" + filepath.Base(path)
 	srv.Handle(pattern, http.NotFoundHandler())
@@ -70,7 +60,7 @@ func (srv *Server) HandleFileServer(path string) {
 }
 
 // Open makes the Server implement the http.FileSystem interface.
-// Проверяем присутсвует файл index.html в статических папках.
+// Check if the file is present index.html in static folders.
 func (srv *Server) Open(path string) (file http.File, err error) {
 	if file, err = srv.FileSystem.Open(path); err == nil {
 		var info os.FileInfo
@@ -92,7 +82,8 @@ func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h(w, r)
 }
 
-func (srv *Server) HandleMethod(method string, path string, handle HandlerFunc) {
+// HandleMethod
+func (srv *Server) HandleMethod(method string, pattern string, handle HandlerFunc) {
 	switch method {
 	case http.MethodGet:
 	case http.MethodPost:
@@ -106,37 +97,47 @@ func (srv *Server) HandleMethod(method string, path string, handle HandlerFunc) 
 	}
 }
 
-// GET is a shortcut for server.HandleMethod(http.MethodGet, path, handle)
+// GET
 func (srv *Server) GET(pattern string, handle HandlerFunc) {
 	srv.HandleMethod(http.MethodGet, pattern, handle)
 }
 
-// POST is a shortcut for server.HandleMethod(http.MethodPost, path, handle)
+// POST
 func (srv *Server) POST(pattern string, handle HandlerFunc) {
 	srv.HandleMethod(http.MethodPost, pattern, handle)
 }
 
-// PUT is a shortcut for server.HandleMethod(http.MethodPut, path, handle)
+// PUT
 func (srv *Server) PUT(pattern string, handle HandlerFunc) {
 	srv.HandleMethod(http.MethodPut, pattern, handle)
 }
 
-// PATCH is a shortcut for server.HandleMethod(http.MethodPatch, path, handle)
+// PATCH
 func (srv *Server) PATCH(pattern string, handle HandlerFunc) {
 	srv.HandleMethod(http.MethodPatch, pattern, handle)
 }
 
-// DELETE is a shortcut for server.HandleMethod(http.MethodDelete, path, handle)
+// DELETE
 func (srv *Server) DELETE(pattern string, handle HandlerFunc) {
 	srv.HandleMethod(http.MethodDelete, pattern, handle)
 }
 
-// HEAD is a shortcut for server.HandleMethod(http.MethodHead, path, handle)
+// HEAD
 func (srv *Server) HEAD(pattern string, handle HandlerFunc) {
 	srv.HandleMethod(http.MethodHead, pattern, handle)
 }
 
-// OPTIONS is a shortcut for server.HandleMethod(http.MethodOptions, path, handle)
+// OPTIONS
 func (srv *Server) OPTIONS(pattern string, handle HandlerFunc) {
 	srv.HandleMethod(http.MethodOptions, pattern, handle)
+}
+
+func (srv *Server) handle() {
+	/*for _, v := range srv.Entry {
+		fmt.Println(v)
+	}*/
+	srv.HandleFunc("/", handler.Home)
+	srv.HandleFunc("/about", handler.About)
+	srv.HandleFunc("/error", handler.Error)
+	srv.HandleFile("./web/static")
 }

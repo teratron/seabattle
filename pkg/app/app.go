@@ -3,12 +3,11 @@ package app
 import (
 	//_ "database/sql"
 	"fmt"
-	"log"
 	"path/filepath"
 	"sync"
 
-	"github.com/teratron/seabattle/cmd/seabattle/handler"
 	"github.com/teratron/seabattle/pkg/config"
+	"github.com/teratron/seabattle/pkg/handler"
 	"github.com/teratron/seabattle/pkg/logger"
 	"github.com/teratron/seabattle/pkg/server"
 
@@ -49,7 +48,11 @@ func (app *Application) Server() {
 // Run
 func (app *Application) Run() {
 	fmt.Println(app.cfg.Encode(filepath.Join("configs", "config2.yml")))
-	log.Fatal(app.srv.Run())
+	app.log.Error.Fatal(app.srv.Run())
+}
+
+func (app *Application) Handle(pattern string, handle server.HandlerFunc) {
+	//TODO:
 }
 
 func (app *Application) handle() {
@@ -60,7 +63,7 @@ func (app *Application) handle() {
 	app.srv.HandleFunc("/", handler.Home)
 	app.srv.HandleFunc("/about", handler.About)
 	app.srv.HandleFunc("/error", handler.Error)
-	app.srv.HandleFileServer("./web/static")
+	app.srv.HandleFile("./web/static")
 }
 
 // Theme

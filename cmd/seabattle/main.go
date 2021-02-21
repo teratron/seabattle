@@ -1,6 +1,6 @@
 package main
 
-import "github.com/teratron/seabattle/cmd/seabattle/app"
+import "github.com/teratron/seabattle/pkg/app"
 
 func main() {
 	// New создаём новое приложение
