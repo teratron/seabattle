@@ -1,26 +1,30 @@
-package handler
+package main
 
-/*import (
-	"fmt"
-	"html/template"
+import (
+	"log"
 	"net/http"
-	"path/filepath"
 
 	"github.com/teratron/seabattle/pkg/server"
 )
 
-var (
-	PathWebDir      = filepath.Join(".", "web")
-	PathStaticDir   = filepath.Join(PathWebDir, "static")
-	PathTemplateDir = filepath.Join(PathWebDir, "template")
-)
+func main() {
+	// New создаём новое приложение
+	srv := server.New()
+
+	srv.HandleFunc("/", Home)
+	//srv.HandleFunc("/about", About)
+	srv.HandleFile("./web/static")
+
+	// Run запускает приложение
+	log.Fatal(srv.Run())
+}
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.NotFound(w, r)
 		return
 	}
-	page := &server.Page{
+	/*page := &server.Page{
 		Data: server.Data{
 			Lang:        "en",
 			Description: "Sea Battle - multiplayer online game",
@@ -50,13 +54,13 @@ func Home(w http.ResponseWriter, r *http.Request) {
 			filepath.Join(server.PathTemplateDir, "partial.footer.tmpl"),
 			filepath.Join(server.PathTemplateDir, "layout.base.tmpl"),
 		},
-	}
-	tmpl, err := template.ParseFiles(page.Files...)
+	}*/
+	/*tmpl, err := template.ParseFiles(page.Files...)
 	if err == nil {
 		err = tmpl.Execute(w, page.Data)
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = fmt.Fprintf(w, err.Error())
-	}
-}*/
+	}*/
+}

@@ -38,7 +38,26 @@ type Timeout struct {
 	Idle   time.Duration `yaml:"idle"`
 }
 
-type Entry map[string]map[string]interface{}
+type Entry map[string]Page
+
+type Page struct {
+	Data  `yaml:"data"`
+	Files []string `yaml:"files,omitempty"`
+}
+
+type Data struct {
+	Lang        string            `yaml:"lang"`
+	Description string            `yaml:"description"`
+	Author      string            `yaml:"author"`
+	Keyword     string            `yaml:"keyword"`
+	Theme       string            `yaml:"theme"`
+	Path        map[string]string `yaml:"path"` // List of static path
+
+	Name     string            `yaml:"name"`
+	Title    string            `yaml:"title"`
+	AttrHTML map[string]string `yaml:"attrHTML"` // List of attributes attached to the <html> tag
+	AttrBody map[string]string `yaml:"attrBody"` // List of attributes attached to the <body> tag
+}
 
 func New() *Config {
 	cfg := &Config{
@@ -54,16 +73,17 @@ func New() *Config {
 				Idle:   5,
 			},
 		},
-		Entry: map[string]map[string]interface{}{
+		Entry: make(map[string]Page),
+		/*Entry: map[string]Page{
 			"/": {
-				"name":  "Home",
-				"title": "Sea Battle - Home",
+				Files: []string{
+					filepath.Join(".", "web", "template", "page.home.tmpl"),
+					filepath.Join(".", "web", "template", "partial.header.tmpl"),
+					filepath.Join(".", "web", "template", "partial.footer.tmpl"),
+					filepath.Join(".", "web", "template", "layout.base.tmpl"),
+				},
 			},
-			"/about": {
-				"name":  "About",
-				"title": "About Us",
-			},
-		},
+		},*/
 	}
 	return cfg
 }

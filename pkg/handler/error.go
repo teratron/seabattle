@@ -1,6 +1,6 @@
 package handler
 
-import (
+/*import (
 	"fmt"
 	"html/template"
 	"net/http"
@@ -18,7 +18,7 @@ func Error(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	layout := &server.Layout{
+	page := &server.Page{
 		Data: server.Data{
 			Name:  "error",
 			Title: "Error",
@@ -30,12 +30,12 @@ func Error(w http.ResponseWriter, r *http.Request) {
 			filepath.Join(server.PathTemplateDir, "layout.base.tmpl"),
 		},
 	}
-	tmpl, err := template.ParseFiles(layout.Files...)
+	tmpl, err := template.ParseFiles(page.Files...)
 	if err == nil {
-		err = tmpl.Execute(w, layout.Data)
+		err = tmpl.Execute(w, page.Data)
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = fmt.Fprintf(w, err.Error())
 	}
-}
+}*/

@@ -3,10 +3,10 @@ package main
 import "github.com/teratron/seabattle/pkg/app"
 
 func main() {
-	// New создаём новое приложение
+	// New создаёт новое приложение
 	a := app.New()
 
-	// Server создаём сервер приложения и запускаем его
+	// Server создаёт сервер приложения и запускаем его
 	a.Server()
 
 	// Run запускает приложение

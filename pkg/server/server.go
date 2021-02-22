@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -48,6 +47,20 @@ func (srv *Server) Run() error {
 	return srv.ListenAndServe()
 }
 
+// HandleEntry
+func (srv *Server) HandleEntry() {
+	i := 0
+	page := make([]*Page, len(srv.Entry))
+	for key, value := range srv.Entry {
+		page[i] = &Page{
+			pattern: key,
+			Page:    value,
+		}
+		srv.Handle(key, page[i])
+		i++
+	}
+}
+
 // HandleFile initializes http.FileServer, that will handle
 // HTTP-requests to static files from a folder (for example: "./web/static").
 // Используем функцию Handle() для регистрации обработчика для
@@ -73,82 +86,4 @@ func (srv *Server) Open(path string) (file http.File, err error) {
 		}
 	}
 	return
-}
-
-// HandlerFunc is a function type that implements the http.Handler interface.
-type HandlerFunc func(http.ResponseWriter, *http.Request)
-
-func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h(w, r)
-}
-
-/*type HandlerString string
-
-func (h HandlerString) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	//h(w, r)
-	_, _ = fmt.Fprintf(w, "Welcome %s", h)
-}*/
-
-func (srv *Server) HandleEntry() {
-	for key, value := range srv.Entry {
-		fmt.Println(key, value)
-		//srv.Handle(key, HandlerString(value))
-	}
-	/*var r HandlerFunc
-	srv.Handle("/", r)
-	srv.HandleFunc("/", r)
-	srv.HandleFunc("/", handler.Home)
-	srv.HandleFunc("/about", handler.About)
-	srv.HandleFunc("/error", handler.Error)
-	srv.HandleFile("./web/static")*/
-}
-
-// HandleMethod
-func (srv *Server) HandleMethod(method string, pattern string, handle HandlerFunc) {
-	switch method {
-	case http.MethodGet:
-	case http.MethodPost:
-	case http.MethodPut:
-	case http.MethodPatch:
-	case http.MethodDelete:
-	case http.MethodHead:
-	case http.MethodOptions:
-	default:
-		srv.Error.Printf("wrong method: %s", method)
-	}
-}
-
-// GET
-func (srv *Server) GET(pattern string, handle HandlerFunc) {
-	srv.HandleMethod(http.MethodGet, pattern, handle)
-}
-
-// POST
-func (srv *Server) POST(pattern string, handle HandlerFunc) {
-	srv.HandleMethod(http.MethodPost, pattern, handle)
-}
-
-// PUT
-func (srv *Server) PUT(pattern string, handle HandlerFunc) {
-	srv.HandleMethod(http.MethodPut, pattern, handle)
-}
-
-// PATCH
-func (srv *Server) PATCH(pattern string, handle HandlerFunc) {
-	srv.HandleMethod(http.MethodPatch, pattern, handle)
-}
-
-// DELETE
-func (srv *Server) DELETE(pattern string, handle HandlerFunc) {
-	srv.HandleMethod(http.MethodDelete, pattern, handle)
-}
-
-// HEAD
-func (srv *Server) HEAD(pattern string, handle HandlerFunc) {
-	srv.HandleMethod(http.MethodHead, pattern, handle)
-}
-
-// OPTIONS
-func (srv *Server) OPTIONS(pattern string, handle HandlerFunc) {
-	srv.HandleMethod(http.MethodOptions, pattern, handle)
 }

@@ -40,7 +40,8 @@ func (app *Application) Server() {
 
 	//app.log.Warning =
 	_ = app.srv.LoadConfig(filepath.Join("configs", "config.yml"))
-
+	//fmt.Println(app.cfg)
+	//fmt.Println(app.cfg)
 	app.srv.HandleEntry()
 }
 
@@ -50,7 +51,7 @@ func (app *Application) Run() {
 	app.log.Error.Fatal(app.srv.Run())
 }
 
-func (app *Application) Handle(pattern string, handle server.HandlerFunc) {
+func (app *Application) Handle(pattern string, handler server.HandlerFunc) {
 	//TODO:
 }
 

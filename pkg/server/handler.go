@@ -1,100 +1,29 @@
 package server
 
 import (
-	"path/filepath"
+	"fmt"
+	"html/template"
+	"net/http"
+
+	"github.com/teratron/seabattle/pkg/config"
 )
 
-var (
-	PathWebDir      = filepath.Join(".", "web")
-	PathStaticDir   = filepath.Join(PathWebDir, "static")
-	PathTemplateDir = filepath.Join(PathWebDir, "template")
-)
-
-// Layout
-type Layout struct {
-	Data  Data
-	Files []string
+type Page struct {
+	pattern string
+	config.Page
 }
 
-// Data
-type Data struct {
-	Lang        string
-	Description string
-	Author      string
-	Keyword     string
-	Theme       string
-
-	Name  string
-	Title string
-
-	// List of attributes attached to the <html> tag
-	AttrHTML map[string]string
-
-	// List of attributes attached to the <body> tag
-	AttrBody map[string]string
-
-	// List of static path
-	Path map[string]string
-}
-
-/*func (h *HandlerFunc) ServHTTP(w http.ResponseWriter, r *http.Request, layout *Layout) {
-	if r.URL.Path != "/" {
+func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != p.pattern {
 		http.NotFound(w, r)
 		return
 	}
-	tmpl, err := template.ParseFiles(layout.Files...)
+	fmt.Println(p.Files)
+	tmpl, err := template.ParseFiles(p.Files...)
 	if err == nil {
-		err = tmpl.Execute(w, layout.Data)
+		err = tmpl.Execute(w, p.Data)
 	}
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		_, _ = fmt.Fprintf(w, err.Error())
+		_, err = fmt.Fprintf(w, err.Error())
 	}
-}*/
-
-/*func (l *Layout) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprint(w, l.data, r)
 }
-*/
-/*func init() {
-	mux := http.NewServeMux()
-
-	h1 := Layout{Name: "Index"}
-	h2 := Layout{Name: "About"}
-
-	mux.Handle("/123", &h1)
-	mux.Handle("/1234", &h2)
-
-	_ = http.ListenAndServe(":8282", mux)
-}*/
-
-// DownloadHandler
-/*func DownloadHandler(w http.ResponseWriter, r *http.Request, name string) {
-	http.ServeFile(w, r, filepath.Clean(name))
-}*/
-
-/*var (
-	NotFoundHandler       = StatusHandler(http.StatusNotFound)
-	NotLegalHandler       = StatusHandler(451)
-	NotImplementedHandler = StatusHandler(501)
-)
-
-// HandlerStatus is a function type that implements the Handler interface.
-type StatusHandler int
-
-//
-func (s StatusHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	code := int(s)
-	w.WriteHeader(code)
-	if _, err := io.WriteString(w, http.StatusText(code)); err != nil {
-		log.Println(err)
-	}
-}*/
-
-// ClientFunc is a function type that implements the Client interface.
-//type ClientFunc func(*http.Request) (*http.Response, error)
-
-// Do does the request
-/*func (c ClientFunc) Do(r *http.Request) (*http.Response, error) {
-	return c(r)
-}*/

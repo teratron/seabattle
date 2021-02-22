@@ -9,8 +9,38 @@ server:
 
 entry:
   /:
-    name: Home
-    title: Sea Battle - Home
+    data:
+      lang: ""
+      description: ""
+      author: ""
+      keyword: ""
+      theme: ""
+      name: Home
+      title: Sea Battle - Home
+      attrHTML: {}
+      attrBody:
+        id: home
+        class: home scroll
+      path: {}
+    files:
+      - web\template\page.home.tmpl
+      - web\template\partial.header.tmpl
+      - web\template\partial.footer.tmpl
+      - web\template\layout.base.tmpl
   /about:
-    name: About
-    title: About Us
+    data:
+      lang: ""
+      description: ""
+      author: ""
+      keyword: ""
+      theme: ""
+      name: About
+      title: About Us
+      attrHTML: {}
+      attrBody: {}
+      path: {}
+    files:
+      - web\template\page.about.tmpl
+      - web\template\partial.header.tmpl
+      - web\template\partial.footer.tmpl
+      - web\template\layout.base.tmpl
