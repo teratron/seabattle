@@ -5,6 +5,8 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+
+	"github.com/teratron/seabattle/pkg/server"
 )
 
 func Error(w http.ResponseWriter, r *http.Request) {
@@ -16,21 +18,21 @@ func Error(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 		return
 	}
-	layout := &Layout{
-		data: Data{
+	layout := &server.Layout{
+		Data: server.Data{
 			Name:  "error",
 			Title: "Error",
 		},
-		files: []string{
-			filepath.Join(PathTemplateDir, "page.error.tmpl"),
-			filepath.Join(PathTemplateDir, "partial.header.tmpl"),
-			filepath.Join(PathTemplateDir, "partial.footer.tmpl"),
-			filepath.Join(PathTemplateDir, "layout.base.tmpl"),
+		Files: []string{
+			filepath.Join(server.PathTemplateDir, "page.error.tmpl"),
+			filepath.Join(server.PathTemplateDir, "partial.header.tmpl"),
+			filepath.Join(server.PathTemplateDir, "partial.footer.tmpl"),
+			filepath.Join(server.PathTemplateDir, "layout.base.tmpl"),
 		},
 	}
-	tmpl, err := template.ParseFiles(layout.files...)
+	tmpl, err := template.ParseFiles(layout.Files...)
 	if err == nil {
-		err = tmpl.Execute(w, layout.data)
+		err = tmpl.Execute(w, layout.Data)
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

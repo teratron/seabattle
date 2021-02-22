@@ -1,13 +1,13 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
 
 	"github.com/teratron/seabattle/pkg/config"
-	"github.com/teratron/seabattle/pkg/handler"
 	"github.com/teratron/seabattle/pkg/logger"
 )
 
@@ -82,6 +82,27 @@ func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h(w, r)
 }
 
+/*type HandlerString string
+
+func (h HandlerString) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	//h(w, r)
+	_, _ = fmt.Fprintf(w, "Welcome %s", h)
+}*/
+
+func (srv *Server) HandleEntry() {
+	for key, value := range srv.Entry {
+		fmt.Println(key, value)
+		//srv.Handle(key, HandlerString(value))
+	}
+	/*var r HandlerFunc
+	srv.Handle("/", r)
+	srv.HandleFunc("/", r)
+	srv.HandleFunc("/", handler.Home)
+	srv.HandleFunc("/about", handler.About)
+	srv.HandleFunc("/error", handler.Error)
+	srv.HandleFile("./web/static")*/
+}
+
 // HandleMethod
 func (srv *Server) HandleMethod(method string, pattern string, handle HandlerFunc) {
 	switch method {
@@ -130,14 +151,4 @@ func (srv *Server) HEAD(pattern string, handle HandlerFunc) {
 // OPTIONS
 func (srv *Server) OPTIONS(pattern string, handle HandlerFunc) {
 	srv.HandleMethod(http.MethodOptions, pattern, handle)
-}
-
-func (srv *Server) handle() {
-	/*for _, v := range srv.Entry {
-		fmt.Println(v)
-	}*/
-	srv.HandleFunc("/", handler.Home)
-	srv.HandleFunc("/about", handler.About)
-	srv.HandleFunc("/error", handler.Error)
-	srv.HandleFile("./web/static")
 }

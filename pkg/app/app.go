@@ -7,7 +7,6 @@ import (
 	"sync"
 
 	"github.com/teratron/seabattle/pkg/config"
-	"github.com/teratron/seabattle/pkg/handler"
 	"github.com/teratron/seabattle/pkg/logger"
 	"github.com/teratron/seabattle/pkg/server"
 
@@ -42,7 +41,7 @@ func (app *Application) Server() {
 	//app.log.Warning =
 	_ = app.srv.LoadConfig(filepath.Join("configs", "config.yml"))
 
-	app.handle()
+	app.srv.HandleEntry()
 }
 
 // Run
@@ -55,16 +54,12 @@ func (app *Application) Handle(pattern string, handle server.HandlerFunc) {
 	//TODO:
 }
 
-func (app *Application) handle() {
-	/*for _, v := range app.cfg.Entry {
-		//fmt.Println(v)
-		app.srv.HandleFunc(v, handler.Home)
-	}*/
+/*func (app *Application) handle() {
 	app.srv.HandleFunc("/", handler.Home)
 	app.srv.HandleFunc("/about", handler.About)
 	app.srv.HandleFunc("/error", handler.Error)
 	app.srv.HandleFile("./web/static")
-}
+}*/
 
 // Theme
 func (app *Application) Theme() string {

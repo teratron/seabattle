@@ -17,17 +17,18 @@ func init() {
 }
 
 type Config struct {
-	file   string
-	addr   string
+	file string
+	addr string
+
 	Server `yaml:"server"`
-	Entry  []string `yaml:"entry"`
+	Entry  `yaml:"entry"`
 }
 
 type Server struct {
-	Host    string `yaml:"host"`
-	Port    int    `yaml:"port"`
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
+
 	Timeout `yaml:"timeout"`
-	//Entry   `yaml:"entry"`
 }
 
 type Timeout struct {
@@ -37,7 +38,7 @@ type Timeout struct {
 	Idle   time.Duration `yaml:"idle"`
 }
 
-//type Entry map[string]string
+type Entry map[string]map[string]interface{}
 
 func New() *Config {
 	cfg := &Config{
@@ -52,19 +53,16 @@ func New() *Config {
 				Write:  10,
 				Idle:   5,
 			},
-			//Entry: make(map[string]string),
-			/*Entry: map[string]string{
-				"/":        "home",
-				"/about":   "about",
-				"/error":   "error",
-				"/static":  "static",
-				"/static/": "static",
-			},*/
 		},
-		Entry: []string{
-			"/",
-			"/about",
-			"/error",
+		Entry: map[string]map[string]interface{}{
+			"/": {
+				"name":  "Home",
+				"title": "Sea Battle - Home",
+			},
+			"/about": {
+				"name":  "About",
+				"title": "About Us",
+			},
 		},
 	}
 	return cfg

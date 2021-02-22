@@ -6,3 +6,11 @@ server:
     read: 15
     write: 10
     idle: 5
+
+entry:
+  /:
+    name: Home
+    title: Sea Battle - Home
+  /about:
+    name: About
+    title: About Us
