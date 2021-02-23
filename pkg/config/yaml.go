@@ -15,6 +15,15 @@ func (cfg *Config) Decode(path string) error {
 	return err
 }
 
+func (s *Server) Decode(path string) error {
+	file, err := os.OpenFile(path, os.O_RDONLY, 0)
+	if err == nil {
+		defer func() { err = file.Close() }()
+		err = yaml.NewDecoder(file).Decode(&s)
+	}
+	return err
+}
+
 func (cfg *Config) Encode(path string) error {
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 	if err == nil {

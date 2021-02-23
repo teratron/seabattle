@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -24,6 +25,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	_, _ = fmt.Fprintf(w, "*** %v", r)
 	/*page := &server.Page{
 		Data: server.Data{
 			Lang:        "en",

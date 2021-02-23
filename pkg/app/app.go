@@ -32,7 +32,7 @@ func New() *Application {
 
 // Server
 func (app *Application) Server() {
-	app.srv.Config = app.cfg
+	//app.srv.Config = app.cfg
 	app.srv.Logger = app.log
 	app.srv.ErrorLog = app.log.Error
 

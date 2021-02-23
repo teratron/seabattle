@@ -5,25 +5,32 @@ import (
 	"strconv"
 	//"github.com/teratron/seabattle/pkg/config"
 	//"github.com/teratron/seabattle/pkg/logger"
+
+	"github.com/teratron/seabattle/pkg/config"
+	"github.com/teratron/seabattle/pkg/logger"
 )
 
 type Server struct {
 	http.Server
-	router
-	/*http.ServeMux
-	http.FileSystem
 
-	*config.Config
-	*logger.Logger*/
+	router
 }
 
 // New initializes a new Server.
 func New(addr ...string) *Server {
-	srv := new(Server)
+	srv := &Server{
+		router: router{
+			Server:  config.Server{}.New(),
+			Handler: config.Handler{}.New(),
+			Logger:  logger.New(),
+		},
+	}
 	if len(addr) > 0 {
 		srv.Addr = addr[0]
 	} else {
-		srv.Addr = "localhost:8080"
+		if err := srv.LoadConfig(srv.router.Server.File); err != nil {
+			srv.Addr = "localhost:8080"
+		}
 	}
 	srv.Server.Handler = srv
 	return srv
@@ -31,9 +38,8 @@ func New(addr ...string) *Server {
 
 // LoadConfig
 func (srv *Server) LoadConfig(path string) (err error) {
-	err = srv.Decode(path)
-	if err == nil {
-		srv.Addr = srv.Config.Server.Host + ":" + strconv.Itoa(srv.Config.Server.Port)
+	if err = srv.Decode(path); err == nil {
+		srv.Addr = srv.Host + ":" + strconv.Itoa(srv.Port)
 	}
 	return
 }

@@ -1,4 +1,4 @@
-common:
+base:
   lang: en
   description: Sea Battle - multiplayer online game
   author: Oleg Alexandrov

@@ -14,6 +14,9 @@ import (
 		log.Printf("Defaulting to port %s", port)
 	}
 }*/
+/*type Configer interface {
+
+}*/
 
 type Config struct {
 	file string

@@ -13,7 +13,8 @@ type router struct {
 	http.ServeMux
 	http.FileSystem
 
-	*config.Config
+	*config.Server
+	*config.Handler
 	*logger.Logger
 }
 
@@ -61,11 +62,9 @@ func (r *router) OPTIONS(pattern string, handler http.Handler) {
 
 // HandleMethod
 func (r *router) HandleMethod(method string, pattern string, handler http.Handler) {
-	/*switch handle.(type) {
-	case HandlerFunc:
-	}*/
 	switch method {
 	case http.MethodGet:
+		r.Handle(pattern, handler)
 	case http.MethodPost:
 	case http.MethodPut:
 	case http.MethodPatch:
