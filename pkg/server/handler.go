@@ -8,6 +8,7 @@ import (
 	"github.com/teratron/seabattle/pkg/config"
 )
 
+// Page
 type Page struct {
 	pattern string
 	config.Page
@@ -18,7 +19,6 @@ func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	fmt.Println(p.Files)
 	tmpl, err := template.ParseFiles(p.Files...)
 	if err == nil {
 		err = tmpl.Execute(w, p.Data)

@@ -2,9 +2,19 @@ package server
 
 import (
 	"net/http"
+	"os"
+	"path/filepath"
+
+	"github.com/teratron/seabattle/pkg/config"
+	"github.com/teratron/seabattle/pkg/logger"
 )
 
 type router struct {
+	http.ServeMux
+	http.FileSystem
+
+	*config.Config
+	*logger.Logger
 }
 
 // HandlerFunc is a function type that implements the http.Handler interface.
@@ -14,11 +24,45 @@ func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h(w, r)
 }
 
+// GET
+func (r *router) GET(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodGet, pattern, handler)
+}
+
+// POST
+func (r *router) POST(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodPost, pattern, handler)
+}
+
+// PUT
+func (r *router) PUT(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodPut, pattern, handler)
+}
+
+// PATCH
+func (r *router) PATCH(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodPatch, pattern, handler)
+}
+
+// DELETE
+func (r *router) DELETE(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodDelete, pattern, handler)
+}
+
+// HEAD
+func (r *router) HEAD(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodHead, pattern, handler)
+}
+
+// OPTIONS
+func (r *router) OPTIONS(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodOptions, pattern, handler)
+}
+
 // HandleMethod
-func (srv *Server) HandleMethod(method string, pattern string, handler http.Handler) {
+func (r *router) HandleMethod(method string, pattern string, handler http.Handler) {
 	/*switch handle.(type) {
 	case HandlerFunc:
-
 	}*/
 	switch method {
 	case http.MethodGet:
@@ -29,43 +73,49 @@ func (srv *Server) HandleMethod(method string, pattern string, handler http.Hand
 	case http.MethodHead:
 	case http.MethodOptions:
 	default:
-		srv.Error.Printf("wrong method: %s", method)
+		r.Error.Printf("wrong method: %s", method)
 	}
 }
 
-// GET
-func (srv *Server) GET(pattern string, handler http.Handler) {
-	srv.HandleMethod(http.MethodGet, pattern, handler)
+// HandleEntry
+func (r *router) HandleEntry() {
+	i := 0
+	page := make([]*Page, len(r.Entry))
+	for key, value := range r.Entry {
+		page[i] = &Page{
+			pattern: key,
+			Page:    value,
+		}
+		r.Handle(key, page[i])
+		i++
+	}
 }
 
-// POST
-func (srv *Server) POST(pattern string, handler http.Handler) {
-	srv.HandleMethod(http.MethodPost, pattern, handler)
+// HandleFile initializes http.FileServer, that will handle
+// HTTP-requests to static files from a folder (for example: "./web/static").
+// Use the Handle() function to register a handler for all requests
+// that start with the pattern  (for example: "/static/").
+func (r *router) HandleFile(path string) {
+	r.FileSystem = http.Dir(path)
+	pattern := "/" + filepath.Base(path)
+	r.Handle(pattern, http.NotFoundHandler())
+	r.Handle(pattern+"/", http.StripPrefix(pattern, http.FileServer(r)))
 }
 
-// PUT
-func (srv *Server) PUT(pattern string, handler http.Handler) {
-	srv.HandleMethod(http.MethodPut, pattern, handler)
-}
-
-// PATCH
-func (srv *Server) PATCH(pattern string, handler http.Handler) {
-	srv.HandleMethod(http.MethodPatch, pattern, handler)
-}
-
-// DELETE
-func (srv *Server) DELETE(pattern string, handler http.Handler) {
-	srv.HandleMethod(http.MethodDelete, pattern, handler)
-}
-
-// HEAD
-func (srv *Server) HEAD(pattern string, handler http.Handler) {
-	srv.HandleMethod(http.MethodHead, pattern, handler)
-}
-
-// OPTIONS
-func (srv *Server) OPTIONS(pattern string, handler http.Handler) {
-	srv.HandleMethod(http.MethodOptions, pattern, handler)
+// Open makes the Server implement the http.FileSystem interface.
+// Check if the file is present index.html in static folders.
+func (r *router) Open(path string) (file http.File, err error) {
+	if file, err = r.FileSystem.Open(path); err == nil {
+		var info os.FileInfo
+		if info, err = file.Stat(); err == nil && info.IsDir() {
+			if _, err = r.FileSystem.Open(path + "index.html"); err != nil {
+				if file.Close() != nil {
+					return nil, err
+				}
+			}
+		}
+	}
+	return
 }
 
 // DownloadHandler

@@ -2,61 +2,25 @@ package config
 
 import (
 	"path/filepath"
-	"time"
 )
 
-func init() {
-	/*if err := os.Setenv("PORT", "8080"); err != nil {
+/*func init() {
+	if err := os.Setenv("PORT", "8080"); err != nil {
 		log.Println(err)
-	}*/
-	/*port := os.Getenv("PORT")
+	}
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 		log.Printf("Defaulting to port %s", port)
-	}*/
-}
+	}
+}*/
 
 type Config struct {
 	file string
 	addr string
 
-	Server `yaml:"server"`
-	Entry  `yaml:"entry"`
-}
-
-type Server struct {
-	Host string `yaml:"host"`
-	Port int    `yaml:"port"`
-
-	Timeout `yaml:"timeout"`
-}
-
-type Timeout struct {
-	Server time.Duration `yaml:"server"`
-	Read   time.Duration `yaml:"read"`
-	Write  time.Duration `yaml:"write"`
-	Idle   time.Duration `yaml:"idle"`
-}
-
-type Entry map[string]Page
-
-type Page struct {
-	Data  `yaml:"data"`
-	Files []string `yaml:"files,omitempty"`
-}
-
-type Data struct {
-	Lang        string            `yaml:"lang"`
-	Description string            `yaml:"description"`
-	Author      string            `yaml:"author"`
-	Keyword     string            `yaml:"keyword"`
-	Theme       string            `yaml:"theme"`
-	Path        map[string]string `yaml:"path"` // List of static path
-
-	Name     string            `yaml:"name"`
-	Title    string            `yaml:"title"`
-	AttrHTML map[string]string `yaml:"attrHTML"` // List of attributes attached to the <html> tag
-	AttrBody map[string]string `yaml:"attrBody"` // List of attributes attached to the <body> tag
+	Server  `yaml:"server"`
+	Handler `yaml:"handler"`
 }
 
 func New() *Config {
@@ -73,7 +37,7 @@ func New() *Config {
 				Idle:   5,
 			},
 		},
-		Entry: make(map[string]Page),
+		//Entry: make(map[string]Page),
 		/*Entry: map[string]Page{
 			"/": {
 				Files: []string{

@@ -1,8 +1,6 @@
 package app
 
 import (
-	//_ "database/sql"
-	"fmt"
 	"path/filepath"
 	"sync"
 
@@ -47,7 +45,7 @@ func (app *Application) Server() {
 
 // Run
 func (app *Application) Run() {
-	fmt.Println(app.cfg.Encode(filepath.Join("configs", "config2.yml")))
+	_ = app.cfg.Encode(filepath.Join("configs", "config2.yml"))
 	app.log.Error.Fatal(app.srv.Run())
 }
 
