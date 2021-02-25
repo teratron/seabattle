@@ -1,7 +1,7 @@
 host: 127.0.0.1
-port: 8086
+port: 8087
 timeout:
-  server: 30
+  header: 30
   read: 15
   write: 10
   idle: 5

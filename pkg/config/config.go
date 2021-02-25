@@ -22,19 +22,19 @@ type Config struct {
 	file string
 	addr string
 
-	Server  `yaml:"server"`
-	Handler `yaml:"handler"`
+	ConfServer  `yaml:"server"`
+	ConfHandler `yaml:"handler"`
 }
 
 func New() *Config {
 	cfg := &Config{
 		file: filepath.Join("configs", "config.yml"),
 		addr: "localhost:8080",
-		Server: Server{
+		ConfServer: ConfServer{
 			Host: "localhost",
 			Port: 8080,
 			Timeout: Timeout{
-				Server: 30,
+				Header: 30,
 				Read:   15,
 				Write:  10,
 				Idle:   5,

@@ -1,14 +1,10 @@
 package config
 
-import (
-	"path/filepath"
-)
+type ConfHandler struct {
+	file string `yaml:"-"`
+	Err  error  `yaml:"-"`
 
-type Handler struct {
-	File string `yaml:"-"`
-
-	Base `yaml:"base,flow"`
-
+	Base  `yaml:"base,flow"`
 	Entry map[string]Page `yaml:"entry"`
 }
 
@@ -22,8 +18,7 @@ type Base struct {
 }
 
 type Page struct {
-	Data `yaml:"data"`
-
+	Data  `yaml:"data"`
 	Files []string `yaml:"files,omitempty"`
 }
 
@@ -37,8 +32,13 @@ type Data struct {
 }
 
 // New
-func (h Handler) New() *Handler {
-	return &Handler{
-		File: filepath.Join("configs", "handler.yml"),
-	}
+/*func (cfg *ConfHandler) New() *ConfHandler {
+	cfg.file = filepath.Join("configs", "handler.yml")
+	return cfg
+}*/
+
+func NewConfHandler() *ConfHandler {
+	/*cfg.file = filepath.Join("configs", "handler.yml")
+	return cfg*/
+	return nil
 }

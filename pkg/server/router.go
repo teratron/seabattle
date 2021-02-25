@@ -13,8 +13,8 @@ type router struct {
 	http.ServeMux
 	http.FileSystem
 
-	*config.Server
-	*config.Handler
+	*config.ConfServer
+	*config.ConfHandler
 	*logger.Logger
 }
 
@@ -28,6 +28,11 @@ func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // GET
 func (r *router) GET(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodGet, pattern, handler)
+}
+
+// HEAD
+func (r *router) HEAD(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodHead, pattern, handler)
 }
 
 // POST
@@ -50,9 +55,9 @@ func (r *router) DELETE(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodDelete, pattern, handler)
 }
 
-// HEAD
-func (r *router) HEAD(pattern string, handler http.Handler) {
-	r.HandleMethod(http.MethodHead, pattern, handler)
+// CONNECT
+func (r *router) CONNECT(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodConnect, pattern, handler)
 }
 
 // OPTIONS
@@ -60,17 +65,24 @@ func (r *router) OPTIONS(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodOptions, pattern, handler)
 }
 
+// TRACE
+func (r *router) TRACE(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodTrace, pattern, handler)
+}
+
 // HandleMethod
 func (r *router) HandleMethod(method string, pattern string, handler http.Handler) {
 	switch method {
 	case http.MethodGet:
 		r.Handle(pattern, handler)
+	case http.MethodHead:
 	case http.MethodPost:
 	case http.MethodPut:
 	case http.MethodPatch:
 	case http.MethodDelete:
-	case http.MethodHead:
+	case http.MethodConnect:
 	case http.MethodOptions:
+	case http.MethodTrace:
 	default:
 		r.Error.Printf("wrong method: %s", method)
 	}

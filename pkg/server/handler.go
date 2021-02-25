@@ -19,10 +19,12 @@ func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+
 	tmpl, err := template.ParseFiles(p.Files...)
 	if err == nil {
 		err = tmpl.Execute(w, p.Data)
 	}
+
 	if err != nil {
 		_, err = fmt.Fprintf(w, err.Error())
 	}
