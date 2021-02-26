@@ -1,0 +1,7 @@
+host: 127.0.0.1
+port: 8080
+timeout:
+  header: 0
+  read: 0
+  write: 0
+  idle: 0

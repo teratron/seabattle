@@ -1,11 +1,15 @@
 package config
 
-type ConfHandler struct {
-	file string `yaml:"-"`
-	Err  error  `yaml:"-"`
+import (
+	"path/filepath"
+)
 
-	Base  `yaml:"base,flow"`
-	Entry map[string]Page `yaml:"entry"`
+type ConfHandler struct {
+	file string
+	Err  error `yaml:"-"`
+
+	Base  `yaml:"base"`
+	Entry map[string]*Page `yaml:"entry"`
 }
 
 type Base struct {
@@ -23,7 +27,7 @@ type Page struct {
 }
 
 type Data struct {
-	base *Base
+	*Base `yaml:"-"`
 
 	Name     string            `yaml:"name"`
 	Title    string            `yaml:"title"`
@@ -31,14 +35,30 @@ type Data struct {
 	AttrBody map[string]string `yaml:"attrBody"` // List of attributes attached to the <body> tag
 }
 
-// New
-/*func (cfg *ConfHandler) New() *ConfHandler {
-	cfg.file = filepath.Join("configs", "handler.yml")
-	return cfg
-}*/
-
+// NewConfHandler
 func NewConfHandler() *ConfHandler {
-	/*cfg.file = filepath.Join("configs", "handler.yml")
-	return cfg*/
-	return nil
+	cfg := &ConfHandler{
+		file: filepath.Join("configs", "handler.yml"),
+		Base: Base{
+			Lang:  "en",
+			Theme: "default",
+			Path: map[string]string{
+				"img": "../static/img/",
+				"css": "../static/css/",
+				"js":  "../static/js/",
+			},
+		},
+		Entry: make(map[string]*Page),
+	}
+
+	cfg.Err = cfg.Decode(cfg.file)
+	if cfg.Err == nil {
+		for _, value := range cfg.Entry {
+			value.Base = &cfg.Base
+			for i, file := range value.Files {
+				value.Files[i] = filepath.Join("web", "template", file)
+			}
+		}
+	}
+	return cfg
 }

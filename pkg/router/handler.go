@@ -1,4 +1,4 @@
-package server
+package router
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 // Page
 type Page struct {
 	pattern string
-	config.Page
+	*config.Page
 }
 
 func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {

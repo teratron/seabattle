@@ -1,21 +1,60 @@
-package server
+package router
 
 import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/teratron/seabattle/pkg/config"
 	"github.com/teratron/seabattle/pkg/logger"
 )
 
-type router struct {
+type Router struct {
+	http.Server
 	http.ServeMux
 	http.FileSystem
 
-	*config.ConfServer
+	*config.ConfRouter
 	*config.ConfHandler
 	*logger.Logger
+}
+
+// New initializes a new Router.
+func New() *Router {
+	r := &Router{
+		ConfRouter:  config.NewConfRouter(),
+		ConfHandler: config.NewConfHandler(),
+		Logger:      logger.New(),
+	}
+
+	if r.ConfRouter.Err != nil {
+		r.Error.Printf("load default config: %v", r.ConfRouter.Err)
+	}
+
+	r.Server.Addr = r.Host + ":" + strconv.Itoa(r.Port)
+	r.Server.Handler = r
+	r.Server.ReadHeaderTimeout = r.ConfRouter.Header
+	r.Server.ReadTimeout = r.ConfRouter.Read
+	r.Server.WriteTimeout = r.ConfRouter.Write
+	r.Server.IdleTimeout = r.ConfRouter.Idle
+	r.Server.ErrorLog = r.Logger.Error
+
+	return r
+}
+
+// LoadConfig
+func (r *Router) LoadConfig(path string) (err error) {
+	// TODO:
+	return
+}
+
+// Run
+func (r *Router) Run() error {
+	r.Info.Printf("Listening on port %d", r.Port)
+	r.Info.Printf("Open http://%s in the browser", r.Addr)
+
+	return r.ListenAndServe()
 }
 
 // HandlerFunc is a function type that implements the http.Handler interface.
@@ -26,52 +65,52 @@ func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET
-func (r *router) GET(pattern string, handler http.Handler) {
+func (r *Router) GET(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodGet, pattern, handler)
 }
 
 // HEAD
-func (r *router) HEAD(pattern string, handler http.Handler) {
+func (r *Router) HEAD(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodHead, pattern, handler)
 }
 
 // POST
-func (r *router) POST(pattern string, handler http.Handler) {
+func (r *Router) POST(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodPost, pattern, handler)
 }
 
 // PUT
-func (r *router) PUT(pattern string, handler http.Handler) {
+func (r *Router) PUT(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodPut, pattern, handler)
 }
 
 // PATCH
-func (r *router) PATCH(pattern string, handler http.Handler) {
+func (r *Router) PATCH(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodPatch, pattern, handler)
 }
 
 // DELETE
-func (r *router) DELETE(pattern string, handler http.Handler) {
+func (r *Router) DELETE(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodDelete, pattern, handler)
 }
 
 // CONNECT
-func (r *router) CONNECT(pattern string, handler http.Handler) {
+func (r *Router) CONNECT(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodConnect, pattern, handler)
 }
 
 // OPTIONS
-func (r *router) OPTIONS(pattern string, handler http.Handler) {
+func (r *Router) OPTIONS(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodOptions, pattern, handler)
 }
 
 // TRACE
-func (r *router) TRACE(pattern string, handler http.Handler) {
+func (r *Router) TRACE(pattern string, handler http.Handler) {
 	r.HandleMethod(http.MethodTrace, pattern, handler)
 }
 
 // HandleMethod
-func (r *router) HandleMethod(method string, pattern string, handler http.Handler) {
+func (r *Router) HandleMethod(method string, pattern string, handler http.Handler) {
 	switch method {
 	case http.MethodGet:
 		r.Handle(pattern, handler)
@@ -89,16 +128,9 @@ func (r *router) HandleMethod(method string, pattern string, handler http.Handle
 }
 
 // HandleEntry
-func (r *router) HandleEntry() {
-	i := 0
-	page := make([]*Page, len(r.Entry))
+func (r *Router) HandleEntry() {
 	for key, value := range r.Entry {
-		page[i] = &Page{
-			pattern: key,
-			Page:    value,
-		}
-		r.Handle(key, page[i])
-		i++
+		r.Handle(key, &Page{key, value})
 	}
 }
 
@@ -106,7 +138,7 @@ func (r *router) HandleEntry() {
 // HTTP-requests to static files from a folder (for example: "./web/static").
 // Use the Handle() function to register a handler for all requests
 // that start with the pattern  (for example: "/static/").
-func (r *router) HandleFile(path string) {
+func (r *Router) HandleFile(path string) {
 	r.FileSystem = http.Dir(path)
 	pattern := "/" + filepath.Base(path)
 	r.Handle(pattern, http.NotFoundHandler())
@@ -115,7 +147,7 @@ func (r *router) HandleFile(path string) {
 
 // Open makes the Server implement the http.FileSystem interface.
 // Check if the file is present index.html in static folders.
-func (r *router) Open(path string) (file http.File, err error) {
+func (r *Router) Open(path string) (file http.File, err error) {
 	if file, err = r.FileSystem.Open(path); err == nil {
 		var info os.FileInfo
 		if info, err = file.Stat(); err == nil && info.IsDir() {

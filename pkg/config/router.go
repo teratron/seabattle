@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type ConfServer struct {
+type ConfRouter struct {
 	file string
 	Err  error `yaml:"-"`
 
@@ -21,23 +21,10 @@ type Timeout struct {
 	Idle   time.Duration `yaml:"idle"`
 }
 
-// New
-/*func (cfg *Server) New() *Server {
-	cfg.file = filepath.Join("configs", "server.yml")
-	if cfg.Err = cfg.Decode(cfg.file); cfg.Err != nil {
-		cfg.Host = "localhost"
-		cfg.Port = 8080
-		cfg.Header = 30
-		cfg.Read = 15
-		cfg.Write = 10
-		cfg.Idle = 5
-	}
-	return cfg
-}*/
-
-func NewConfServer() *ConfServer {
-	cfg := &ConfServer{
-		file: filepath.Join("configs", "server.yml"),
+// NewConfServer
+func NewConfRouter() *ConfRouter {
+	cfg := &ConfRouter{
+		file: filepath.Join("configs", "router.yml"),
 		Host: "localhost",
 		Port: 8080,
 		Timeout: Timeout{
@@ -47,6 +34,7 @@ func NewConfServer() *ConfServer {
 			Idle:   5,
 		},
 	}
+
 	cfg.Err = cfg.Decode(cfg.file)
 	return cfg
 }

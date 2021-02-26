@@ -6,6 +6,15 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+/*func Decode(path string, cfg *Config) error {
+	file, err := os.OpenFile(path, os.O_RDONLY, 0)
+	if err == nil {
+		defer func() { err = file.Close() }()
+		err = yaml.NewDecoder(file).Decode(&cfg)
+	}
+	return err
+}*/
+
 func (cfg *Config) Decode(path string) error {
 	file, err := os.OpenFile(path, os.O_RDONLY, 0)
 	if err == nil {
@@ -15,7 +24,16 @@ func (cfg *Config) Decode(path string) error {
 	return err
 }
 
-func (cfg *ConfServer) Decode(path string) error {
+func (cfg *ConfRouter) Decode(path string) error {
+	file, err := os.OpenFile(path, os.O_RDONLY, 0)
+	if err == nil {
+		defer func() { err = file.Close() }()
+		err = yaml.NewDecoder(file).Decode(&cfg)
+	}
+	return err
+}
+
+func (cfg *ConfHandler) Decode(path string) error {
 	file, err := os.OpenFile(path, os.O_RDONLY, 0)
 	if err == nil {
 		defer func() { err = file.Close() }()
@@ -25,6 +43,15 @@ func (cfg *ConfServer) Decode(path string) error {
 }
 
 func (cfg *Config) Encode(path string) error {
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	if err == nil {
+		defer func() { err = file.Close() }()
+		err = yaml.NewEncoder(file).Encode(&cfg)
+	}
+	return err
+}
+
+func (cfg *ConfHandler) Encode(path string) error {
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
 	if err == nil {
 		defer func() { err = file.Close() }()

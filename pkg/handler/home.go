@@ -49,6 +49,10 @@ func Home(w http.ResponseWriter, r *http.Request) {
 			filepath.Join(server.PathTemplateDir, "partial.header.tmpl"),
 			filepath.Join(server.PathTemplateDir, "partial.footer.tmpl"),
 			filepath.Join(server.PathTemplateDir, "layout.base.tmpl"),
+		filepath.Join("web", "template", "page.home.tmpl"),
+		filepath.Join("web", "template", "partial.header.tmpl"),
+		filepath.Join("web", "template", "partial.footer.tmpl"),
+		filepath.Join("web", "template", "layout.base.tmpl"),
 		},
 	}
 	tmpl, err := template.ParseFiles(page.Files...)

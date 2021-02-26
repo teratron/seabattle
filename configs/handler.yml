@@ -12,26 +12,26 @@ base:
 entry:
   /:
     data:
-      name: Home
+      name: home
       title: Sea Battle - Home
       attrHTML: {}
       attrBody:
         id: home
         class: home scroll
     files:
-      - web/template/page.home.tmpl
-      - web/template/partial.header.tmpl
-      - web/template/partial.footer.tmpl
-      - web/template/layout.base.tmpl
-
+      - page.home.tmpl
+      - partial.header.tmpl
+      - partial.footer.tmpl
+      - layout.base.tmpl
   /about:
     data:
-      name: About
+      name: about
       title: About Us
       attrHTML: {}
-      attrBody: {}
+      attrBody:
+        id: about
     files:
-      - web/template/page.about.tmpl
-      - web/template/partial.header.tmpl
-      - web/template/partial.footer.tmpl
-      - web/template/layout.base.tmpl
+      - page.about.tmpl
+      - partial.header.tmpl
+      - partial.footer.tmpl
+      - layout.base.tmpl
