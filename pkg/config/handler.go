@@ -8,11 +8,11 @@ type ConfHandler struct {
 	file string
 	Err  error `yaml:"-"`
 
-	Base  `yaml:"base"`
-	Entry map[string]*Page `yaml:"entry"`
+	Common `yaml:"common"`
+	Entry  map[string]*Page `yaml:"entry"`
 }
 
-type Base struct {
+type Common struct {
 	Lang        string            `yaml:"lang"`
 	Description string            `yaml:"description"`
 	Author      string            `yaml:"author"`
@@ -27,7 +27,7 @@ type Page struct {
 }
 
 type Data struct {
-	*Base `yaml:"-"`
+	*Common `yaml:"-"`
 
 	Name     string            `yaml:"name"`
 	Title    string            `yaml:"title"`
@@ -39,7 +39,7 @@ type Data struct {
 func NewConfHandler() *ConfHandler {
 	cfg := &ConfHandler{
 		file: filepath.Join("configs", "handler.yml"),
-		Base: Base{
+		Common: Common{
 			Lang:  "en",
 			Theme: "default",
 			Path: map[string]string{
@@ -54,7 +54,7 @@ func NewConfHandler() *ConfHandler {
 	cfg.Err = cfg.Decode(cfg.file)
 	if cfg.Err == nil {
 		for _, value := range cfg.Entry {
-			value.Base = &cfg.Base
+			value.Common = &cfg.Common
 			for i, file := range value.Files {
 				value.Files[i] = filepath.Join("web", "template", file)
 			}

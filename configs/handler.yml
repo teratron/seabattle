@@ -1,4 +1,4 @@
-base:
+common:
   lang: en
   description: Sea Battle - multiplayer online game
   author: Oleg Alexandrov
@@ -23,6 +23,7 @@ entry:
       - partial.header.tmpl
       - partial.footer.tmpl
       - layout.base.tmpl
+
   /about:
     data:
       name: about

@@ -49,10 +49,6 @@ func (app *Application) Run() {
 	app.log.Error.Fatal(app.srv.Run())
 }
 
-func (app *Application) Handle(pattern string, handler router.HandlerFunc) {
-	//TODO:
-}
-
 /*func (app *Application) handle() {
 	app.srv.HandleFunc("/", handler.Home)
 	app.srv.HandleFunc("/about", handler.About)
