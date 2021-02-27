@@ -2,6 +2,8 @@ package config
 
 import (
 	"path/filepath"
+
+	"github.com/teratron/seabattle/pkg/api"
 )
 
 type ConfHandler struct {
@@ -51,14 +53,23 @@ func NewConfHandler() *ConfHandler {
 		Entry: make(map[string]*Page),
 	}
 
-	cfg.Err = cfg.Decode(cfg.file)
-	if cfg.Err == nil {
-		for _, value := range cfg.Entry {
-			value.Common = &cfg.Common
-			for i, file := range value.Files {
-				value.Files[i] = filepath.Join("web", "template", file)
+	file := api.GetFileType(cfg.file)
+	if err, ok := file.(*api.FileError); !ok {
+		cfg.Err = cfg.Decode(file)
+		if cfg.Err == nil {
+			for _, value := range cfg.Entry {
+				value.Common = &cfg.Common
+				for i, file := range value.Files {
+					value.Files[i] = filepath.Join("web", "template", file)
+				}
 			}
 		}
+	} else {
+		cfg.Err = err.Err
 	}
 	return cfg
+}
+
+func (cfg *ConfHandler) Decode(decoder api.Decoder) error {
+	return decoder.Decode(cfg)
 }

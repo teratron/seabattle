@@ -2,6 +2,8 @@ package config
 
 import (
 	"path/filepath"
+
+	"github.com/teratron/seabattle/pkg/api"
 )
 
 type ConfApp struct {
@@ -26,6 +28,16 @@ func NewConfApp() *ConfApp {
 		Runtime:     "go116",
 		ApiVersion:  "go1",
 	}
-	//cfg.Err = cfg.Decode(cfg.file)
+
+	file := api.GetFileType(cfg.file)
+	if err, ok := file.(*api.FileError); !ok {
+		cfg.Err = cfg.Decode(file)
+	} else {
+		cfg.Err = err.Err
+	}
 	return cfg
+}
+
+func (cfg *ConfApp) Decode(decoder api.Decoder) error {
+	return decoder.Decode(cfg)
 }

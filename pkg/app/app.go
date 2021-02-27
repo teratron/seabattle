@@ -1,7 +1,6 @@
 package app
 
 import (
-	"path/filepath"
 	"sync"
 
 	"github.com/teratron/seabattle/pkg/config"
@@ -13,7 +12,7 @@ import (
 
 type Application struct {
 	srv      *router.Router
-	cfg      *config.Config
+	cfg      *config.ConfApp
 	log      *logger.Logger
 	settings *settings
 	mu       sync.Mutex
@@ -23,7 +22,7 @@ type Application struct {
 func New() *Application {
 	return &Application{
 		srv:      router.New(),
-		cfg:      config.New(),
+		cfg:      config.NewConfApp(),
 		log:      logger.New(),
 		settings: &settings{},
 		mu:       sync.Mutex{},
@@ -45,7 +44,7 @@ func (app *Application) Server() {
 
 // Run
 func (app *Application) Run() {
-	_ = app.cfg.Encode(filepath.Join("configs", "config2.yml"))
+	//_ = app.cfg.Encode(filepath.Join("configs", "config2.yml"))
 	app.log.Error.Fatal(app.srv.Run())
 }
 

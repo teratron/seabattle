@@ -3,6 +3,8 @@ package config
 import (
 	"path/filepath"
 	"time"
+
+	"github.com/teratron/seabattle/pkg/api"
 )
 
 type ConfRouter struct {
@@ -35,6 +37,15 @@ func NewConfRouter() *ConfRouter {
 		},
 	}
 
-	cfg.Err = cfg.Decode(cfg.file)
+	file := api.GetFileType(cfg.file)
+	if err, ok := file.(*api.FileError); !ok {
+		cfg.Err = cfg.Decode(file)
+	} else {
+		cfg.Err = err.Err
+	}
 	return cfg
+}
+
+func (cfg *ConfRouter) Decode(decoder api.Decoder) error {
+	return decoder.Decode(cfg)
 }

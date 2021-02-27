@@ -43,18 +43,19 @@ func New() *Router {
 	return r
 }
 
-// LoadConfig
-func (r *Router) LoadConfig(path string) (err error) {
-	// TODO:
-	return
-}
-
 // Run
 func (r *Router) Run() error {
 	r.Info.Printf("Listening on port %d", r.Port)
 	r.Info.Printf("Open http://%s in the browser", r.Addr)
 
 	return r.ListenAndServe()
+}
+
+// HandlerFunc is a function type that implements the http.Handler interface.
+type HandlerFunc func(http.ResponseWriter, *http.Request)
+
+func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h(w, r)
 }
 
 // HandleEntry
