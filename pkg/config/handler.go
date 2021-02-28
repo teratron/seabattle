@@ -15,12 +15,10 @@ type ConfHandler struct {
 }
 
 type Common struct {
-	Lang        string            `json:"lang" yaml:"lang"`
-	Description string            `json:"description" yaml:"description"`
-	Author      string            `json:"author" yaml:"author"`
-	Keyword     string            `json:"keyword" yaml:"keyword"`
-	Theme       string            `json:"theme" yaml:"theme"`
-	Path        map[string]string `json:"path" yaml:"path"` // List of static path
+	Lang  string            `json:"lang" yaml:"lang"`
+	Theme string            `json:"theme" yaml:"theme"`
+	Meta  map[string]string `json:"meta" yaml:"meta"`
+	Path  map[string]string `json:"path" yaml:"path"` // List of static path
 }
 
 type Page struct {
@@ -44,6 +42,13 @@ func NewConfHandler() *ConfHandler {
 		Common: Common{
 			Lang:  "en",
 			Theme: "default",
+			Meta: map[string]string{
+				"description": "",
+				"author":      "",
+				"keyword":     "",
+				"generator":   "",
+				"robots":      "index, follow",
+			},
 			Path: map[string]string{
 				"img": "../static/img/",
 				"css": "../static/css/",

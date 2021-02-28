@@ -7,11 +7,11 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-        <meta name="description" content="{{ .Description }}">
-        <meta name="author" content="{{ .Author }}">
-        <meta name="keyword" content="{{ .Keyword }}">
-        <meta name="generator" content="">
-        <meta name="robots" content="index, follow">
+        <meta name="description" content="{{ .Meta.description }}">
+        <meta name="author" content="{{ .Meta.author }}">
+        <meta name="keyword" content="{{ .Meta.keyword }}">
+        <meta name="generator" content="{{ .Meta.generator }}">
+        <meta name="robots" content="{{ .Meta.robots }}">
         <title>{{ .Title }}</title>
         <link rel="shortcut icon" type="image/png" href="{{ .Path.img }}favicon/favicon.png">
         <link rel="stylesheet" href="{{ .Path.css }}main.css">
