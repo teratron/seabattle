@@ -8,12 +8,19 @@ import (
 
 type ConfApp struct {
 	file string
-	Err  error `yaml:"-"`
+	Err  error `json:"-" yaml:"-"`
 
-	Application string `yaml:"application"`
-	Version     string `yaml:"version"`
-	Runtime     string `yaml:"runtime"`
-	ApiVersion  string `yaml:"api_version"`
+	Application string `json:"application" yaml:"application"`
+	Version     string `json:"version" yaml:"version"`
+	Runtime     string `json:"runtime" yaml:"runtime"`
+	ApiVersion  string `json:"api_version" yaml:"api_version"`
+
+	Settings `json:"settings" yaml:"settings"`
+}
+
+type Settings struct {
+	Language string `json:"language" yaml:"language"`
+	Theme    string `json:"theme" yaml:"theme"`
 }
 
 // NewConfApp
@@ -24,6 +31,10 @@ func NewConfApp() *ConfApp {
 		Version:     "0.0.1",
 		Runtime:     "go116",
 		ApiVersion:  "go1",
+		Settings: Settings{
+			Language: "en",
+			Theme:    "default",
+		},
 	}
 
 	file := api.GetFileType(cfg.file)

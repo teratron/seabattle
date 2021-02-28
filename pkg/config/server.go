@@ -9,18 +9,18 @@ import (
 
 type ConfServer struct {
 	file string
-	Err  error `yaml:"-"`
+	Err  error `json:"-" yaml:"-"`
 
-	Host    string `yaml:"host"`
-	Port    int    `yaml:"port"`
-	Timeout `yaml:"timeout"`
+	Host    string `json:"host" yaml:"host"`
+	Port    int    `json:"port" yaml:"port"`
+	Timeout `json:"timeout" yaml:"timeout"`
 }
 
 type Timeout struct {
-	Header time.Duration `yaml:"header"`
-	Read   time.Duration `yaml:"read"`
-	Write  time.Duration `yaml:"write"`
-	Idle   time.Duration `yaml:"idle"`
+	Header time.Duration `json:"header" yaml:"header"`
+	Read   time.Duration `json:"read" yaml:"read"`
+	Write  time.Duration `json:"write" yaml:"write"`
+	Idle   time.Duration `json:"idle" yaml:"idle"`
 }
 
 // NewConfServer

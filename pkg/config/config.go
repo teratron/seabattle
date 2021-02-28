@@ -20,37 +20,11 @@ import (
 
 type Config struct {
 	file string
-	addr string
-
-	//ConfServer  `yaml:"server"`
-	//ConfHandler `yaml:"handler"`
 }
 
 func New() *Config {
 	cfg := &Config{
 		file: filepath.Join("configs", "config.yml"),
-		addr: "localhost:8080",
-		/*ConfServer: ConfServer{
-			Host: "localhost",
-			Port: 8080,
-			Timeout: Timeout{
-				Header: 30,
-				Read:   15,
-				Write:  10,
-				Idle:   5,
-			},
-		},*/
-		//Entry: make(map[string]Page),
-		/*Entry: map[string]Page{
-			"/": {
-				Files: []string{
-					filepath.Join(".", "web", "template", "page.home.tmpl"),
-					filepath.Join(".", "web", "template", "partial.header.tmpl"),
-					filepath.Join(".", "web", "template", "partial.footer.tmpl"),
-					filepath.Join(".", "web", "template", "layout.base.tmpl"),
-				},
-			},
-		},*/
 	}
 	return cfg
 }

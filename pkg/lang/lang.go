@@ -1,3 +1,3 @@
 package lang
 
-type lang map[string]string
+type Lang map[string]string

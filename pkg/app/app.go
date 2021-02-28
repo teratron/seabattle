@@ -11,27 +11,25 @@ import (
 )
 
 type Application struct {
-	srv      *server.Server
-	cfg      *config.ConfApp
-	log      *logger.Logger
-	settings *settings
-	mu       sync.Mutex
+	srv *server.Server
+	cfg *config.ConfApp
+	log *logger.Logger
+	mu  sync.Mutex
 }
 
 // New
 func New() *Application {
-	return &Application{
-		srv:      server.New(),
-		cfg:      config.NewConfApp(),
-		log:      logger.New(),
-		settings: &settings{},
-		mu:       sync.Mutex{},
+	app := &Application{
+		srv: server.New(),
+		cfg: config.NewConfApp(),
+		log: logger.New(),
+		mu:  sync.Mutex{},
 	}
+	return app
 }
 
 // Server
 func (app *Application) Server() {
-	//app.srv.Config = app.cfg
 	app.srv.Logger = app.log
 	app.srv.ErrorLog = app.log.Error
 
@@ -41,7 +39,7 @@ func (app *Application) Server() {
 
 // Run
 func (app *Application) Run() {
-	//_ = app.cfg.Encode(filepath.Join("configs", "config2.yml"))
+
 	app.log.Error.Fatal(app.srv.Start())
 }
 
@@ -53,6 +51,6 @@ func (app *Application) Run() {
 }*/
 
 // Theme
-func (app *Application) Theme() string {
+/*func (app *Application) Theme() string {
 	return app.settings.theme
-}
+}*/

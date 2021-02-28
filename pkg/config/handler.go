@@ -8,33 +8,33 @@ import (
 
 type ConfHandler struct {
 	file string
-	Err  error `yaml:"-"`
+	Err  error `json:"-" yaml:"-"`
 
-	Common `yaml:"common"`
-	Entry  map[string]*Page `yaml:"entry"`
+	Common `json:"common" yaml:"common"`
+	Entry  map[string]*Page `json:"entry" yaml:"entry"`
 }
 
 type Common struct {
-	Lang        string            `yaml:"lang"`
-	Description string            `yaml:"description"`
-	Author      string            `yaml:"author"`
-	Keyword     string            `yaml:"keyword"`
-	Theme       string            `yaml:"theme"`
-	Path        map[string]string `yaml:"path"` // List of static path
+	Lang        string            `json:"lang" yaml:"lang"`
+	Description string            `json:"description" yaml:"description"`
+	Author      string            `json:"author" yaml:"author"`
+	Keyword     string            `json:"keyword" yaml:"keyword"`
+	Theme       string            `json:"theme" yaml:"theme"`
+	Path        map[string]string `json:"path" yaml:"path"` // List of static path
 }
 
 type Page struct {
-	Data  `yaml:"data"`
-	Files []string `yaml:"files,omitempty"`
+	Data  `json:"data" yaml:"data"`
+	Files []string `json:"files,omitempty" yaml:"files,omitempty"`
 }
 
 type Data struct {
-	*Common `yaml:"-"`
+	*Common `json:"-" yaml:"-"`
 
-	Name     string            `yaml:"name"`
-	Title    string            `yaml:"title"`
-	AttrHTML map[string]string `yaml:"attrHTML"` // List of attributes attached to the <html> tag
-	AttrBody map[string]string `yaml:"attrBody"` // List of attributes attached to the <body> tag
+	Name     string            `json:"name" yaml:"name"`
+	Title    string            `json:"title" yaml:"title"`
+	AttrHTML map[string]string `json:"attrHTML" yaml:"attrHTML"` // List of attributes attached to the <html> tag
+	AttrBody map[string]string `json:"attrBody" yaml:"attrBody"` // List of attributes attached to the <body> tag
 }
 
 // NewConfHandler

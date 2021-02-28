@@ -1,6 +1,6 @@
 package app
 
-type settings struct {
+/*type settings struct {
 	lang  string
 	theme string
 }
@@ -11,4 +11,4 @@ func (s *settings) Theme() string {
 
 func (s *settings) SetTheme(theme string) {
 	s.theme = theme
-}
+}*/
