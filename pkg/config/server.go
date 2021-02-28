@@ -7,7 +7,7 @@ import (
 	"github.com/teratron/seabattle/pkg/api"
 )
 
-type ConfRouter struct {
+type ConfServer struct {
 	file string
 	Err  error `yaml:"-"`
 
@@ -24,9 +24,9 @@ type Timeout struct {
 }
 
 // NewConfServer
-func NewConfRouter() *ConfRouter {
-	cfg := &ConfRouter{
-		file: filepath.Join("configs", "router.yml"),
+func NewConfServer() *ConfServer {
+	cfg := &ConfServer{
+		file: filepath.Join("configs", "server.yml"),
 		Host: "localhost",
 		Port: 8080,
 		Timeout: Timeout{
@@ -46,6 +46,6 @@ func NewConfRouter() *ConfRouter {
 	return cfg
 }
 
-func (cfg *ConfRouter) Decode(decoder api.Decoder) error {
+func (cfg *ConfServer) Decode(decoder api.Decoder) error {
 	return decoder.Decode(cfg)
 }

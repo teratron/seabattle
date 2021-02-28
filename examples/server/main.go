@@ -5,19 +5,19 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/teratron/seabattle/pkg/router"
+	"github.com/teratron/seabattle/pkg/server"
 )
 
 func main() {
 	// New создаём новое приложение
-	r := router.New()
+	srv := server.New()
 
-	r.HandleEntry()
-	r.HandleFunc("/test", test)
-	r.HandleFile("./web/static")
+	srv.HandleEntry()
+	srv.HandleFunc("/test", test)
+	srv.HandleFile("./web/static")
 
 	// Run запускает приложение
-	log.Fatal(r.Run())
+	log.Fatal(srv.Start())
 }
 
 func test(w http.ResponseWriter, r *http.Request) {

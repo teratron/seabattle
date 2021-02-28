@@ -14,9 +14,6 @@ type ConfApp struct {
 	Version     string `yaml:"version"`
 	Runtime     string `yaml:"runtime"`
 	ApiVersion  string `yaml:"api_version"`
-
-	//ConfServer  `yaml:"server"`
-	//ConfHandler `yaml:"handler"`
 }
 
 // NewConfApp

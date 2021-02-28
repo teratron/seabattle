@@ -5,6 +5,19 @@ import (
 	"path/filepath"
 )
 
+type DecodeEncoder interface {
+	Decoder
+	Encoder
+}
+
+type Decoder interface {
+	Decode(Decoder) error
+}
+
+type Encoder interface {
+	Encode(Encoder) error
+}
+
 type FileError struct {
 	Err error
 	DecodeEncoder

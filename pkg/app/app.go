@@ -5,13 +5,13 @@ import (
 
 	"github.com/teratron/seabattle/pkg/config"
 	"github.com/teratron/seabattle/pkg/logger"
-	"github.com/teratron/seabattle/pkg/router"
+	"github.com/teratron/seabattle/pkg/server"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type Application struct {
-	srv      *router.Router
+	srv      *server.Server
 	cfg      *config.ConfApp
 	log      *logger.Logger
 	settings *settings
@@ -21,7 +21,7 @@ type Application struct {
 // New
 func New() *Application {
 	return &Application{
-		srv:      router.New(),
+		srv:      server.New(),
 		cfg:      config.NewConfApp(),
 		log:      logger.New(),
 		settings: &settings{},
@@ -35,17 +35,14 @@ func (app *Application) Server() {
 	app.srv.Logger = app.log
 	app.srv.ErrorLog = app.log.Error
 
-	//app.log.Warning =
-	//_ = app.srv.LoadConfig(filepath.Join("configs", "config.yml"))
-	//fmt.Println(app.cfg)
-	//fmt.Println(app.cfg)
 	app.srv.HandleEntry()
+	app.srv.HandleFile("./web/static")
 }
 
 // Run
 func (app *Application) Run() {
 	//_ = app.cfg.Encode(filepath.Join("configs", "config2.yml"))
-	app.log.Error.Fatal(app.srv.Run())
+	app.log.Error.Fatal(app.srv.Start())
 }
 
 /*func (app *Application) handle() {

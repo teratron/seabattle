@@ -1,54 +1,25 @@
-package router
+package server
 
 import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strconv"
 
 	"github.com/teratron/seabattle/pkg/config"
-	"github.com/teratron/seabattle/pkg/logger"
 )
 
 type Router struct {
-	http.Server
 	http.ServeMux
 	http.FileSystem
 
-	*config.ConfRouter
 	*config.ConfHandler
-	*logger.Logger
 }
 
-// New initializes a new Router.
-func New() *Router {
-	r := &Router{
-		ConfRouter:  config.NewConfRouter(),
+// NewRouter
+func NewRouter() *Router {
+	return &Router{
 		ConfHandler: config.NewConfHandler(),
-		Logger:      logger.New(),
 	}
-
-	if r.ConfRouter.Err != nil {
-		r.Error.Printf("load default config: %v", r.ConfRouter.Err)
-	}
-
-	r.Server.Addr = r.Host + ":" + strconv.Itoa(r.Port)
-	r.Server.Handler = r
-	r.Server.ReadHeaderTimeout = r.ConfRouter.Header
-	r.Server.ReadTimeout = r.ConfRouter.Read
-	r.Server.WriteTimeout = r.ConfRouter.Write
-	r.Server.IdleTimeout = r.ConfRouter.Idle
-	r.Server.ErrorLog = r.Logger.Error
-
-	return r
-}
-
-// Run
-func (r *Router) Run() error {
-	r.Info.Printf("Listening on port %d", r.Port)
-	r.Info.Printf("Open http://%s in the browser", r.Addr)
-
-	return r.ListenAndServe()
 }
 
 // HandlerFunc is a function type that implements the http.Handler interface.
