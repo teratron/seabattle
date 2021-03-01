@@ -18,12 +18,12 @@ type Common struct {
 	Lang  string            `json:"lang" yaml:"lang"`
 	Theme string            `json:"theme" yaml:"theme"`
 	Meta  map[string]string `json:"meta" yaml:"meta"`
-	Path  map[string]string `json:"path" yaml:"path"` // List of static path
+	Path  map[string]string `json:"path" yaml:"path"` // List of static path (img, css, js & etc)
 }
 
 type Page struct {
 	Data  `json:"data" yaml:"data"`
-	Files []string `json:"files,omitempty" yaml:"files,omitempty"`
+	Files []string `json:"files" yaml:"files"`
 }
 
 type Data struct {
@@ -46,7 +46,6 @@ func NewConfHandler() *ConfHandler {
 				"description": "",
 				"author":      "",
 				"keyword":     "",
-				"generator":   "",
 				"robots":      "index, follow",
 			},
 			Path: map[string]string{

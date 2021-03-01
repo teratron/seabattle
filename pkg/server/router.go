@@ -36,6 +36,18 @@ func (r *Router) HandleEntry() {
 	}
 }
 
+// HandlePage
+/*func (r *Router) HandlePage(pattern string) {
+	if value, exist := r.Entry[pattern]; exist {
+		r.Handle(pattern, &Page{pattern, value})
+	}
+}*/
+
+// HandlePage
+/*func (r *Router) HandlePage(pattern string) {
+		r.Handle(pattern, &Page{pattern, value})
+}*/
+
 // HandleFile initializes http.FileServer, that will handle
 // HTTP-requests to static files from a folder (for example: "./web/static").
 // Use the Handle() function to register a handler for all requests
@@ -61,4 +73,67 @@ func (r *Router) Open(path string) (file http.File, err error) {
 		}
 	}
 	return
+}
+
+// GET
+func (r *Router) GET(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodGet, pattern, handler)
+}
+
+// HEAD
+func (r *Router) HEAD(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodHead, pattern, handler)
+}
+
+// POST
+func (r *Router) POST(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodPost, pattern, handler)
+}
+
+// PUT
+func (r *Router) PUT(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodPut, pattern, handler)
+}
+
+// PATCH
+func (r *Router) PATCH(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodPatch, pattern, handler)
+}
+
+// DELETE
+func (r *Router) DELETE(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodDelete, pattern, handler)
+}
+
+// CONNECT
+func (r *Router) CONNECT(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodConnect, pattern, handler)
+}
+
+// OPTIONS
+func (r *Router) OPTIONS(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodOptions, pattern, handler)
+}
+
+// TRACE
+func (r *Router) TRACE(pattern string, handler http.Handler) {
+	r.HandleMethod(http.MethodTrace, pattern, handler)
+}
+
+// HandleMethod
+func (r *Router) HandleMethod(method string, pattern string, handler http.Handler) {
+	switch method {
+	case http.MethodGet:
+		r.Handle(pattern, handler)
+	case http.MethodHead:
+	case http.MethodPost:
+	case http.MethodPut:
+	case http.MethodPatch:
+	case http.MethodDelete:
+	case http.MethodConnect:
+	case http.MethodOptions:
+	case http.MethodTrace:
+	default:
+		//r.Error.Printf("wrong method: %s", method)
+	}
 }

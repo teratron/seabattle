@@ -22,4 +22,5 @@ func main() {
 
 func test(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprint(w, "Test Page")
+	//http.Redirect(w, r, "/", 302)
 }

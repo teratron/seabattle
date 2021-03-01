@@ -48,7 +48,10 @@ func (srv *Server) Start() error {
 	srv.Info.Printf("Listening on port %d", srv.Port)
 	srv.Info.Printf("Open http://%s in the browser", srv.Addr)
 
-	return srv.ListenAndServe()
+	err := srv.ListenAndServe()
+	srv.Error.Fatal(err)
+
+	return err
 }
 
 // Stop
@@ -59,4 +62,14 @@ func (srv *Server) Stop() {
 // Restart
 func (srv *Server) Restart() {
 	srv.Info.Print("Restart server")
+}
+
+// Address
+func (srv *Server) Address() string {
+	return srv.Server.Addr
+}
+
+// SetAddress
+func (srv *Server) SetAddress(addr string) {
+	srv.Server.Addr = addr
 }
