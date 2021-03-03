@@ -6,19 +6,21 @@ import (
 	"path/filepath"
 
 	"github.com/teratron/seabattle/pkg/config"
+	"github.com/teratron/seabattle/pkg/logger"
 )
 
 type Router struct {
 	http.ServeMux
 	http.FileSystem
-
 	*config.ConfHandler
+	*logger.Logger
 }
 
 // NewRouter
 func NewRouter() *Router {
 	return &Router{
 		ConfHandler: config.NewConfHandler(),
+		Logger:      logger.New(),
 	}
 }
 
@@ -32,7 +34,7 @@ func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // HandleEntry
 func (r *Router) HandleEntry() {
 	for key, value := range r.Entry {
-		r.Handle(key, &Page{key, value})
+		r.Handle(key, &Page{pattern: key, Page: value})
 	}
 }
 
@@ -41,11 +43,6 @@ func (r *Router) HandleEntry() {
 	if value, exist := r.Entry[pattern]; exist {
 		r.Handle(pattern, &Page{pattern, value})
 	}
-}*/
-
-// HandlePage
-/*func (r *Router) HandlePage(pattern string) {
-		r.Handle(pattern, &Page{pattern, value})
 }*/
 
 // HandleFile initializes http.FileServer, that will handle

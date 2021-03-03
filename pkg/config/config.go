@@ -2,7 +2,25 @@ package config
 
 import (
 	"path/filepath"
+
+	"github.com/teratron/seabattle/pkg/api"
 )
+
+type Configurator interface {
+	api.Decoder
+}
+
+type Config struct {
+	file string
+	Err  error `json:"-" yaml:"-"`
+}
+
+func New() *Config {
+	cfg := &Config{
+		file: filepath.Join("configs", "config.yml"),
+	}
+	return cfg
+}
 
 /*func init() {
 	if err := os.Setenv("PORT", "8080"); err != nil {
@@ -14,20 +32,6 @@ import (
 		log.Printf("Defaulting to port %s", port)
 	}
 }*/
-/*type Configer interface {
-
-}*/
-
-type Config struct {
-	file string
-}
-
-func New() *Config {
-	cfg := &Config{
-		file: filepath.Join("configs", "config.yml"),
-	}
-	return cfg
-}
 
 /*func ValidateConfigPath(path string) error {
 	s, err := os.Stat(path)

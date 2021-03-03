@@ -14,7 +14,6 @@ common:
 entry:
   /:
     data:
-      name: home
       title: Sea Battle - Home
       attrHTML: {}
       attrBody:
@@ -28,7 +27,6 @@ entry:
 
   /about:
     data:
-      name: about
       title: About Us
       attrHTML: {}
       attrBody:

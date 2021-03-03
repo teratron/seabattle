@@ -22,33 +22,24 @@ func New() *Application {
 	app := &Application{
 		srv: server.New(),
 		cfg: config.NewConfApp(),
-		log: logger.New(),
 		mu:  sync.Mutex{},
 	}
+
+	app.log = app.srv.Logger
+
 	return app
 }
 
 // Server
 func (app *Application) Server() {
-	app.srv.Logger = app.log
-	app.srv.ErrorLog = app.log.Error
-
 	app.srv.HandleEntry()
 	app.srv.HandleFile("./web/static")
 }
 
 // Run
 func (app *Application) Run() {
-
 	app.log.Error.Fatal(app.srv.Start())
 }
-
-/*func (app *Application) handle() {
-	app.srv.HandleFunc("/", handler.Home)
-	app.srv.HandleFunc("/about", handler.About)
-	app.srv.HandleFunc("/error", handler.Error)
-	app.srv.HandleFile("./web/static")
-}*/
 
 // Theme
 /*func (app *Application) Theme() string {

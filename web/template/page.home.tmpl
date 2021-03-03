@@ -5,15 +5,21 @@
 
         <img src="{{ .Path.img }}favicon/favicon.png" width="128" alt="favicon"/>
 
-        <b>{{ .AttrBody.id }}</b>
-        {{ range $key, $value := .AttrBody }}
-            {{ $key }}="{{ $value }}"
-            {{ block "attr" $key }}{{ end }}
-            <b {{ template "attr" . }}>{{ $key }}</b>
-        {{ end }}
-
         {{ block "sidebar" . }}id="{{ .AttrBody.id }}"{{ end }}
         <section {{ template "sidebar" . }}></section>
+
+        <style>
+            .sea {
+                display: grid;
+                grid: 1fr 25% 30px / 40% 1fr; /* ряды / колонки */
+                grid-gap: 1em;
+                height: 200px;
+            }
+        </style>
+        <section id="owner" class="sea">
+            {{ range $i, $v := .sea }}
+            <div id="{{ $i }}">{{ $v }}</div>{{ end }}
+        </section>
 
     </main>
     {{ template "footer" . }}

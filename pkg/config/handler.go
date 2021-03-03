@@ -1,6 +1,7 @@
 package config
 
 import (
+	"html/template"
 	"path/filepath"
 
 	"github.com/teratron/seabattle/pkg/api"
@@ -15,10 +16,13 @@ type ConfHandler struct {
 }
 
 type Common struct {
-	Lang  string            `json:"lang" yaml:"lang"`
-	Theme string            `json:"theme" yaml:"theme"`
-	Meta  map[string]string `json:"meta" yaml:"meta"`
-	Path  map[string]string `json:"path" yaml:"path"` // List of static path (img, css, js & etc)
+	Lang  string                  `json:"lang" yaml:"lang"`
+	Theme string                  `json:"theme" yaml:"theme"`
+	Meta  map[string]string       `json:"meta" yaml:"meta"`
+	Path  map[string]template.URL `json:"path" yaml:"path"` // List of static path (img, css, js & etc)
+
+	//App *ConfApp `json:"-" yaml:"-"`
+	//Sea [10]int  `json:"-" yaml:"-"`
 }
 
 type Page struct {
@@ -29,10 +33,12 @@ type Page struct {
 type Data struct {
 	*Common `json:"-" yaml:"-"`
 
-	Name     string            `json:"name" yaml:"name"`
+	Name     string            `json:"-" yaml:"-"`
 	Title    string            `json:"title" yaml:"title"`
 	AttrHTML map[string]string `json:"attrHTML" yaml:"attrHTML"` // List of attributes attached to the <html> tag
 	AttrBody map[string]string `json:"attrBody" yaml:"attrBody"` // List of attributes attached to the <body> tag
+
+	Extra Configurator `json:"extra,omitempty" yaml:"extra,omitempty"`
 }
 
 // NewConfHandler
@@ -43,12 +49,9 @@ func NewConfHandler() *ConfHandler {
 			Lang:  "en",
 			Theme: "default",
 			Meta: map[string]string{
-				"description": "",
-				"author":      "",
-				"keyword":     "",
-				"robots":      "index, follow",
+				"robots": "index, follow",
 			},
-			Path: map[string]string{
+			Path: map[string]template.URL{
 				"img": "../static/img/",
 				"css": "../static/css/",
 				"js":  "../static/js/",
@@ -63,6 +66,7 @@ func NewConfHandler() *ConfHandler {
 		if cfg.Err == nil {
 			for _, value := range cfg.Entry {
 				value.Common = &cfg.Common
+				value.Name = value.Files[0]
 				for i, file := range value.Files {
 					value.Files[i] = filepath.Join("web", "template", file)
 				}

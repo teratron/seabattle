@@ -30,10 +30,10 @@ func NewConfServer() *ConfServer {
 		Host: "localhost",
 		Port: 8080,
 		Timeout: Timeout{
-			Header: 30,
-			Read:   15,
-			Write:  10,
-			Idle:   5,
+			Header: 30 * time.Second,
+			Read:   15 * time.Second,
+			Write:  10 * time.Second,
+			Idle:   5 * time.Second,
 		},
 	}
 

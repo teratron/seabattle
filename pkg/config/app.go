@@ -31,7 +31,6 @@ func NewConfApp() *ConfApp {
 		Version:     "0.0.1",
 		Runtime:     "go116",
 		ApiVersion:  "go1",
-
 		Settings: Settings{
 			Language: "en",
 			Theme:    "default",

@@ -1,6 +1,5 @@
-
 # The binaries to build (just the basenames).
-BINS := seabattle
+BINARY_NAMES := seabattle
 
 # Where to push the docker image.
 REGISTRY ?= docker.pkg.github.com/teratron/seabattle
@@ -25,9 +24,17 @@ BASE_IMAGE ?= gcr.io/distroless/static
 BUILD_IMAGE ?= golang:1.16-alpine
 
 BIN_EXTENSION :=
-ifeq ($(OS), windows)
-  BIN_EXTENSION := .exe
-endif
+	ifeq ($(OS), windows)
+		BIN_EXTENSION := .exe
+	endif
+
+# deps
+deps:
+	go get -u gopkg.in/yaml.v2
+	go get -u github.com/go-sql-driver/mysql
+	go mod tidy
+	go mod vendor
+
 
 # all: @HELP builds binaries for one platform ($OS/$ARCH)
 all: build
@@ -64,7 +71,7 @@ all-push: $(addprefix push-, $(subst /,_, $(ALL_PLATFORMS)))
 # The following structure defeats Go's (intentional) behavior to always touch
 # result files, even if they have not changed. This will still run `go` but
 # will not trigger further work if nothing has actually changed.
-OUTBINS = $(foreach bin,$(BINS),bin/$(OS)_$(ARCH)/$(bin)$(BIN_EXTENSION))
+OUTBINS = $(foreach bin,$(BINARY_NAMES),bin/$(OS)_$(ARCH)/$(bin)$(BIN_EXTENSION))
 
 build: $(OUTBINS)
 
@@ -140,22 +147,22 @@ shell: $(BUILD_DIRS)
 	    $(BUILD_IMAGE)                                          \
 	    /bin/sh $(CMD)
 
-CONTAINER_DOTFILES = $(foreach bin,$(BINS),.container-$(subst /,_,$(REGISTRY)/$(bin))-$(TAG))
+CONTAINER_DOTFILES = $(foreach bin,$(BINARY_NAMES),.container-$(subst /,_,$(REGISTRY)/$(bin))-$(TAG))
 
 # container: @HELP build container for one platform ($OS/$ARCH)
 # containers: @HELP builds containers for one platform ($OS/$ARCH)
 container containers: $(CONTAINER_DOTFILES)
-	@for bin in $(BINS); do                         \
+	@for bin in $(BINARY_NAMES); do                         \
 	    echo "container: $(REGISTRY)/$$bin:$(TAG)"; \
 	done
 
 # Each container-dotfile target can reference a $(BIN) variable.
 # This is done in 2 steps to enable target-specific variables.
-$(foreach bin,$(BINS),$(eval $(strip                                 \
+$(foreach bin,$(BINARY_NAMES),$(eval $(strip                                 \
     .container-$(subst /,_,$(REGISTRY)/$(bin))-$(TAG): BIN = $(bin)  \
 )))
 
-$(foreach bin,$(BINS),$(eval                                                                                   \
+$(foreach bin,$(BINARY_NAMES),$(eval                                                                                   \
     .container-$(subst /,_,$(REGISTRY)/$(bin))-$(TAG): bin/$(OS)_$(ARCH)/$(bin)$(BIN_EXTENSION) in.Dockerfile  \
 ))
 
@@ -174,13 +181,13 @@ $(CONTAINER_DOTFILES):
 
 # push: @HELP pushes the container for one platform ($OS/$ARCH) to the defined registry
 push: $(CONTAINER_DOTFILES)
-	@for bin in $(BINS); do                    \
+	@for bin in $(BINARY_NAMES); do                    \
 	    docker push $(REGISTRY)/$$bin:$(TAG);  \
 	done
 
 # manifest-list: @HELP builds a manifest list of containers for all platforms
 manifest-list: all-push
-	@for bin in $(BINS); do                                   \
+	@for bin in $(BINARY_NAMES); do                                   \
 	    platforms=$$(echo $(ALL_PLATFORMS) | sed 's/ /,/g');  \
 	    manifest-tool                                         \
 	        --username=oauth2accesstoken                      \
@@ -230,7 +237,7 @@ bin-clean:
 # help: @HELP prints this message
 help:
 	@echo "VARIABLES:"
-	@echo "  BINS = $(BINS)"
+	@echo "  BINS = $(BINARY_NAMES)"
 	@echo "  OS = $(OS)"
 	@echo "  ARCH = $(ARCH)"
 	@echo "  REGISTRY = $(REGISTRY)"

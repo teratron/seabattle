@@ -1,6 +1,6 @@
 {{ define "base" }}
     <!DOCTYPE html>
-    <html lang="{{ .Lang }}">
+    <html lang="{{ .Lang }}"{{ .AttrHTML | attrMap }}>
     <head>
         <base href="./">
         <meta charset="UTF-8">
@@ -15,7 +15,7 @@
         <link rel="shortcut icon" type="image/png" href="{{ .Path.img }}favicon/favicon.png">
         <link rel="stylesheet" href="{{ .Path.css }}main.css">
     </head>
-    <body{{ if .AttrBody.id }} id="{{ .AttrBody.id }}"{{ end }}{{ if .AttrBody.class }} class="{{ .AttrBody.class }}"{{ end }}>
+    <body{{ .AttrBody | attrMap }}>
     {{ template "content" . }}
     <script src="{{ .Path.js }}main.js" type="text/javascript"></script>
     </body>
