@@ -10,7 +10,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Application struct {
+type Application interface {
+}
+
+type App struct {
 	srv *server.Server
 	cfg *config.ConfApp
 	log *logger.Logger
@@ -18,8 +21,8 @@ type Application struct {
 }
 
 // New
-func New() *Application {
-	app := &Application{
+func New() *App {
+	app := &App{
 		srv: server.New(),
 		cfg: config.NewConfApp(),
 		mu:  sync.Mutex{},
@@ -31,13 +34,13 @@ func New() *Application {
 }
 
 // Server
-func (app *Application) Server() {
+func (app *App) Server() {
 	app.srv.HandleEntry()
 	app.srv.HandleFile("./web/static")
 }
 
 // Run
-func (app *Application) Run() {
+func (app *App) Run() {
 	app.log.Error.Fatal(app.srv.Start())
 }
 

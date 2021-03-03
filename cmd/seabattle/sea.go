@@ -1,16 +1,14 @@
-package sea
+package main
 
-import "fmt"
+type Game struct {
+	*Sea
+	owner *Sea
+	enemy *Sea
 
-type game struct {
-	*sea
-	owner *sea
-	enemy *sea
-
-	player map[uint16]*sea
+	player map[uint16]*Sea
 }
 
-type sea struct {
+type Sea struct {
 	pool   [][]*cell
 	width  uint8
 	height uint8
@@ -18,20 +16,20 @@ type sea struct {
 }
 
 type cell struct {
-	state ship
+	state Ship
 }
 
-type fleet struct {
-	ship
+type Fleet struct {
+	Ship
 }
 
-type ship struct {
+type Ship struct {
 	deck        uint8
 	position    [][2]uint8
 	orientation string
 }
 
-func main() {
+/*func main() {
 	ship := ship{
 		deck: 4,
 		position: [][2]uint8{
@@ -42,4 +40,4 @@ func main() {
 		},
 	}
 	fmt.Println(ship)
-}
+}*/

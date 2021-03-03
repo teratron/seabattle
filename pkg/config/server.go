@@ -11,9 +11,9 @@ type ConfServer struct {
 	file string
 	Err  error `json:"-" yaml:"-"`
 
-	Host    string `json:"host" yaml:"host"`
-	Port    int    `json:"port" yaml:"port"`
-	Timeout `json:"timeout" yaml:"timeout"`
+	Host     string `json:"host" yaml:"host"`
+	Port     int    `json:"port" yaml:"port"`
+	*Timeout `json:"timeout" yaml:"timeout"`
 }
 
 type Timeout struct {
@@ -29,7 +29,7 @@ func NewConfServer() *ConfServer {
 		file: filepath.Join("configs", "server.yml"),
 		Host: "localhost",
 		Port: 8080,
-		Timeout: Timeout{
+		Timeout: &Timeout{
 			Header: 30 * time.Second,
 			Read:   15 * time.Second,
 			Write:  10 * time.Second,

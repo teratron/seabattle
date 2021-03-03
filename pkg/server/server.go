@@ -28,12 +28,12 @@ func New() *Server {
 	}
 
 	srv.Server.Addr = srv.Host + ":" + strconv.Itoa(srv.Port)
-	srv.Server.Handler = srv
 	srv.Server.ReadHeaderTimeout = srv.ConfServer.Header
 	srv.Server.ReadTimeout = srv.ConfServer.Read
 	srv.Server.WriteTimeout = srv.ConfServer.Write
 	srv.Server.IdleTimeout = srv.ConfServer.Idle
 	srv.Server.ErrorLog = srv.Logger.Error
+	srv.Server.Handler = srv
 
 	return srv
 }

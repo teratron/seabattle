@@ -14,7 +14,7 @@ common:
 entry:
   /:
     data:
-      title: Sea Battle - Home
+      title: Home
       attrHTML: {}
       attrBody:
         id: home

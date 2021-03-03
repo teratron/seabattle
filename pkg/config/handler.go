@@ -11,8 +11,8 @@ type ConfHandler struct {
 	file string
 	Err  error `json:"-" yaml:"-"`
 
-	Common `json:"common" yaml:"common"`
-	Entry  map[string]*Page `json:"entry" yaml:"entry"`
+	*Common `json:"common" yaml:"common"`
+	Entry   map[string]*Page `json:"entry" yaml:"entry"`
 }
 
 type Common struct {
@@ -20,13 +20,10 @@ type Common struct {
 	Theme string                  `json:"theme" yaml:"theme"`
 	Meta  map[string]string       `json:"meta" yaml:"meta"`
 	Path  map[string]template.URL `json:"path" yaml:"path"` // List of static path (img, css, js & etc)
-
-	//App *ConfApp `json:"-" yaml:"-"`
-	//Sea [10]int  `json:"-" yaml:"-"`
 }
 
 type Page struct {
-	Data  `json:"data" yaml:"data"`
+	*Data `json:"data" yaml:"data"`
 	Files []string `json:"files" yaml:"files"`
 }
 
@@ -38,14 +35,14 @@ type Data struct {
 	AttrHTML map[string]string `json:"attrHTML" yaml:"attrHTML"` // List of attributes attached to the <html> tag
 	AttrBody map[string]string `json:"attrBody" yaml:"attrBody"` // List of attributes attached to the <body> tag
 
-	Extra Configurator `json:"extra,omitempty" yaml:"extra,omitempty"`
+	//Extra Configurator `json:"extra,omitempty" yaml:"extra,omitempty"`
 }
 
 // NewConfHandler
 func NewConfHandler() *ConfHandler {
 	cfg := &ConfHandler{
 		file: filepath.Join("configs", "handler.yml"),
-		Common: Common{
+		Common: &Common{
 			Lang:  "en",
 			Theme: "default",
 			Meta: map[string]string{
@@ -65,7 +62,7 @@ func NewConfHandler() *ConfHandler {
 		cfg.Err = cfg.Decode(file)
 		if cfg.Err == nil {
 			for _, value := range cfg.Entry {
-				value.Common = &cfg.Common
+				value.Common = cfg.Common
 				value.Name = value.Files[0]
 				for i, file := range value.Files {
 					value.Files[i] = filepath.Join("web", "template", file)

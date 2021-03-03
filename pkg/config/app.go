@@ -15,7 +15,7 @@ type ConfApp struct {
 	Runtime     string `json:"runtime" yaml:"runtime"`
 	ApiVersion  string `json:"api_version" yaml:"api_version"`
 
-	Settings `json:"settings" yaml:"settings"`
+	*Settings `json:"settings" yaml:"settings"`
 }
 
 type Settings struct {
@@ -31,7 +31,7 @@ func NewConfApp() *ConfApp {
 		Version:     "0.0.1",
 		Runtime:     "go116",
 		ApiVersion:  "go1",
-		Settings: Settings{
+		Settings: &Settings{
 			Language: "en",
 			Theme:    "default",
 		},

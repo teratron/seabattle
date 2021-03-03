@@ -21,10 +21,15 @@ func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	funcMap := template.FuncMap{
+		"app": func() interface{} {
+			return nil
+		},
 		"attrMap": func(m map[string]string) template.HTMLAttr {
 			var s string
 			for k, v := range m {
-				s += fmt.Sprintf(` %s="%s"`, k, v)
+				if len(v) > 0 {
+					s += fmt.Sprintf(` %s="%s"`, k, v)
+				}
 			}
 			return template.HTMLAttr(s)
 		},
@@ -34,7 +39,6 @@ func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		"css":  func(s string) template.CSS { return template.CSS(s) },
 		"js":   func(s string) template.JS { return template.JS(s) },
 	}
-	//Sea := [10]int{2, 3, 5, 6, 8, 9}
 
 	err := template.Must(template.New(p.Name).Funcs(funcMap).ParseFiles(p.Files...)).Execute(w, p.Data)
 	if err != nil {
