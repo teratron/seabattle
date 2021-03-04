@@ -14,6 +14,7 @@
         <title>{{ .Title }}</title>
         <link rel="shortcut icon" type="image/png" href="{{ .Path.img }}favicon/favicon.png">
         <link rel="stylesheet" href="{{ .Path.css }}main.css">
+        <link rel="stylesheet" href="{{ .Path.css }}{{ .Theme }}.css">
     </head>
     <body{{ .AttrBody | attrMap }}>
     {{ template "content" . }}

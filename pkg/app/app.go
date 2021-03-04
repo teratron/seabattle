@@ -15,7 +15,7 @@ type Application interface {
 
 type App struct {
 	srv *server.Server
-	cfg *config.ConfApp
+	cfg *config.App
 	log *logger.Logger
 	mu  sync.Mutex
 }
@@ -24,11 +24,11 @@ type App struct {
 func New() *App {
 	app := &App{
 		srv: server.New(),
-		cfg: config.NewConfApp(),
+		cfg: config.NewApp(),
 		mu:  sync.Mutex{},
 	}
 
-	app.log = app.srv.Logger
+	//app.log = app.srv.log
 
 	return app
 }

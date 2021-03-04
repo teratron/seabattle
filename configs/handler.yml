@@ -1,6 +1,6 @@
 common:
   lang: en
-  theme: default
+  theme: light
   meta:
     description: Sea Battle - multiplayer online game
     author: Oleg Alexandrov
@@ -18,11 +18,12 @@ entry:
       attrHTML: {}
       attrBody:
         id: home
-        class: home scroll
+        class: base
     files:
       - page.home.tmpl
       - partial.header.tmpl
       - partial.footer.tmpl
+      - partial.nav.tmpl
       - layout.base.tmpl
 
   /about:
@@ -31,8 +32,10 @@ entry:
       attrHTML: {}
       attrBody:
         id: about
+        class: base
     files:
       - page.about.tmpl
       - partial.header.tmpl
       - partial.footer.tmpl
+      - partial.nav.tmpl
       - layout.base.tmpl

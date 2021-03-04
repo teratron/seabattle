@@ -10,54 +10,52 @@ import (
 type Server struct {
 	http.Server
 	*Router
-	*config.ConfServer
+
+	cfg *config.Server
 }
 
 // New initializes a new Server.
 func New() *Server {
 	srv := &Server{
-		Router:     NewRouter(),
-		ConfServer: config.NewConfServer(),
+		Router: NewRouter(),
+		cfg:    config.NewServer(),
 	}
 
-	if srv.ConfServer.Err != nil {
-		srv.Error.Printf("load default config: %v", srv.ConfServer.Err)
-	}
-	if srv.ConfHandler.Err != nil {
-		srv.Error.Printf("load default config: %v", srv.ConfHandler.Err)
+	if srv.cfg.Err != nil {
+		srv.log.Error.Printf("load default config: %v", srv.cfg.Err)
 	}
 
-	srv.Server.Addr = srv.Host + ":" + strconv.Itoa(srv.Port)
-	srv.Server.ReadHeaderTimeout = srv.ConfServer.Header
-	srv.Server.ReadTimeout = srv.ConfServer.Read
-	srv.Server.WriteTimeout = srv.ConfServer.Write
-	srv.Server.IdleTimeout = srv.ConfServer.Idle
-	srv.Server.ErrorLog = srv.Logger.Error
-	srv.Server.Handler = srv
+	srv.Addr = srv.cfg.Host + ":" + strconv.Itoa(srv.cfg.Port)
+	srv.ReadHeaderTimeout = srv.cfg.Header
+	srv.ReadTimeout = srv.cfg.Read
+	srv.WriteTimeout = srv.cfg.Write
+	srv.IdleTimeout = srv.cfg.Idle
+	srv.ErrorLog = srv.log.Error
+	srv.Handler = srv
 
 	return srv
 }
 
 // Start
 func (srv *Server) Start() error {
-	srv.Info.Print("Start server")
-	srv.Info.Printf("Listening on port %d", srv.Port)
-	srv.Info.Printf("Open http://%s in the browser", srv.Addr)
+	srv.log.Info.Print("Start server")
+	srv.log.Info.Printf("Listening on port %d", srv.cfg.Port)
+	srv.log.Info.Printf("Open http://%s in the browser", srv.Addr)
 
 	err := srv.ListenAndServe()
-	srv.Error.Print(err)
+	srv.log.Error.Print(err)
 
 	return err
 }
 
 // Stop
 func (srv *Server) Stop() {
-	srv.Info.Print("Stop server")
+	srv.log.Info.Print("Stop server")
 }
 
 // Restart
 func (srv *Server) Restart() {
-	srv.Info.Print("Restart server")
+	srv.log.Info.Print("Restart server")
 }
 
 // Address

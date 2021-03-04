@@ -7,7 +7,7 @@ import (
 	"github.com/teratron/seabattle/pkg/api"
 )
 
-type ConfHandler struct {
+type Handler struct {
 	file string
 	Err  error `json:"-" yaml:"-"`
 
@@ -30,7 +30,6 @@ type Page struct {
 type Data struct {
 	*Common `json:"-" yaml:"-"`
 
-	Name     string            `json:"-" yaml:"-"`
 	Title    string            `json:"title" yaml:"title"`
 	AttrHTML map[string]string `json:"attrHTML" yaml:"attrHTML"` // List of attributes attached to the <html> tag
 	AttrBody map[string]string `json:"attrBody" yaml:"attrBody"` // List of attributes attached to the <body> tag
@@ -38,9 +37,15 @@ type Data struct {
 	//Extra Configurator `json:"extra,omitempty" yaml:"extra,omitempty"`
 }
 
-// NewConfHandler
-func NewConfHandler() *ConfHandler {
-	cfg := &ConfHandler{
+// NewPage
+func NewPage() *Page {
+	p := &Page{}
+	return p
+}
+
+// NewHandler
+func NewHandler() *Handler {
+	cfg := &Handler{
 		file: filepath.Join("configs", "handler.yml"),
 		Common: &Common{
 			Lang:  "en",
@@ -63,7 +68,6 @@ func NewConfHandler() *ConfHandler {
 		if cfg.Err == nil {
 			for _, value := range cfg.Entry {
 				value.Common = cfg.Common
-				value.Name = value.Files[0]
 				for i, file := range value.Files {
 					value.Files[i] = filepath.Join("web", "template", file)
 				}
@@ -75,6 +79,6 @@ func NewConfHandler() *ConfHandler {
 	return cfg
 }
 
-func (cfg *ConfHandler) Decode(decoder api.Decoder) error {
+func (cfg *Handler) Decode(decoder api.Decoder) error {
 	return decoder.Decode(cfg)
 }

@@ -9,11 +9,8 @@ import (
 )
 
 type Logger struct {
-	File string
-	Info,
-	Warning,
-	Error,
-	Debug *log.Logger
+	File                        string
+	Info, Warning, Error, Debug *log.Logger
 }
 
 func New() *Logger {

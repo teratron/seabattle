@@ -5,20 +5,13 @@
 
         <img src="{{ .Path.img }}favicon/favicon.png" width="128" alt="favicon"/>
 
-        {{ block "sidebar" . }}id="{{ .AttrBody.id }}"{{ end }}
-        <section {{ template "sidebar" . }}></section>
-
-        <style>
-            .sea {
-                display: grid;
-                grid: 1fr 25% 30px / 40% 1fr; /* ряды / колонки */
-                grid-gap: 1em;
-                height: 200px;
-            }
-        </style>
         <section id="owner" class="sea">
-            {{ range $i, $v := .Sea }}
-                <div id="{{ $i }}">{{ $v }}</div>{{ end }}
+            {{/* range $i, $v := .Sea }}
+                <div id="{{ $i }}">{{ $v }}</div>
+            {{ end */}}
+        </section>
+
+        <section id="enemy" class="sea">
         </section>
 
     </main>

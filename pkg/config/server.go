@@ -7,7 +7,7 @@ import (
 	"github.com/teratron/seabattle/pkg/api"
 )
 
-type ConfServer struct {
+type Server struct {
 	file string
 	Err  error `json:"-" yaml:"-"`
 
@@ -23,9 +23,9 @@ type Timeout struct {
 	Idle   time.Duration `json:"idle" yaml:"idle"`
 }
 
-// NewConfServer
-func NewConfServer() *ConfServer {
-	cfg := &ConfServer{
+// NewServer
+func NewServer() *Server {
+	cfg := &Server{
 		file: filepath.Join("configs", "server.yml"),
 		Host: "localhost",
 		Port: 8080,
@@ -46,6 +46,6 @@ func NewConfServer() *ConfServer {
 	return cfg
 }
 
-func (cfg *ConfServer) Decode(decoder api.Decoder) error {
+func (cfg *Server) Decode(decoder api.Decoder) error {
 	return decoder.Decode(cfg)
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/teratron/seabattle/pkg/api"
 )
 
-type ConfApp struct {
+type App struct {
 	file string
 	Err  error `json:"-" yaml:"-"`
 
@@ -23,9 +23,9 @@ type Settings struct {
 	Theme    string `json:"theme" yaml:"theme"`
 }
 
-// NewConfApp
-func NewConfApp() *ConfApp {
-	cfg := &ConfApp{
+// NewApp
+func NewApp() *App {
+	cfg := &App{
 		file:        filepath.Join("configs", "app.yml"),
 		Application: "seabattle",
 		Version:     "0.0.1",
@@ -46,6 +46,6 @@ func NewConfApp() *ConfApp {
 	return cfg
 }
 
-func (cfg *ConfApp) Decode(decoder api.Decoder) error {
+func (cfg *App) Decode(decoder api.Decoder) error {
 	return decoder.Decode(cfg)
 }

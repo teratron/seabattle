@@ -82,9 +82,7 @@ BUILD_DIRS := bin/$(OS)_$(ARCH)     \
 
 # Each outbin target is just a facade for the respective stampfile target.
 # This `eval` establishes the dependencies for each.
-$(foreach outbin,$(OUTBINS),$(eval \
-    $(outbin): .go/$(outbin).stamp \
-))
+$(foreach outbin, $(OUTBINS), $(eval $(outbin): .go/$(outbin).stamp))
 
 # This is the target definition for all outbins.
 $(OUTBINS):

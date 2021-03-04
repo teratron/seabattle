@@ -12,16 +12,24 @@ import (
 type Router struct {
 	http.ServeMux
 	http.FileSystem
-	*config.ConfHandler
-	*logger.Logger
+
+	cfg *config.Handler
+	log *logger.Logger
 }
 
 // NewRouter
 func NewRouter() *Router {
-	return &Router{
-		ConfHandler: config.NewConfHandler(),
-		Logger:      logger.New(),
+	r := &Router{
+		cfg: config.NewHandler(),
+		log: logger.New(),
 	}
+
+	r.log.File = filepath.Join("logs", "server.log")
+
+	if r.cfg.Err != nil {
+		r.log.Error.Printf("load default config: %v", r.cfg.Err)
+	}
+	return r
 }
 
 // HandlerFunc is a function type that implements the http.Handler interface.
@@ -33,17 +41,17 @@ func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 // HandleEntry
 func (r *Router) HandleEntry() {
-	for key, value := range r.Entry {
-		r.Handle(key, &Page{pattern: key, Page: value})
+	for key, value := range r.cfg.Entry {
+		r.Handle(key, &Page{key, value})
 	}
 }
 
 // HandlePage
-/*func (r *Router) HandlePage(pattern string) {
-	if value, exist := r.Entry[pattern]; exist {
+func (r *Router) HandlePage(pattern string) {
+	if value, exist := r.cfg.Entry[pattern]; exist {
 		r.Handle(pattern, &Page{pattern, value})
 	}
-}*/
+}
 
 // HandleFile initializes http.FileServer, that will handle
 // HTTP-requests to static files from a folder (for example: "./web/static").
@@ -131,6 +139,6 @@ func (r *Router) HandleMethod(method string, pattern string, handler http.Handle
 	case http.MethodOptions:
 	case http.MethodTrace:
 	default:
-		//r.Error.Printf("wrong method: %s", method)
+		r.log.Error.Printf("wrong method: %s", method)
 	}
 }
