@@ -4,53 +4,79 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/teratron/seabattle/pkg/config"
 	"github.com/teratron/seabattle/pkg/logger"
 )
 
 type Router struct {
+	http.Server
 	http.ServeMux
 	http.FileSystem
 
-	cfg *config.Handler
-	log *logger.Logger
+	*config.ConfServer
+	*config.ConfHandler
+	*logger.Logger
 }
 
-// NewRouter
-func NewRouter() *Router {
+// New
+func New() *Router {
 	r := &Router{
-		cfg: config.NewHandler(),
-		log: logger.New(),
+		ConfServer:  config.NewServer(),
+		ConfHandler: config.NewHandler(),
+		Logger:      logger.New(),
+	}
+	r.Logger.File = filepath.Join("logs", "server.log")
+
+	if r.ConfServer.Err != nil {
+		r.Logger.Error.Printf("load default config: %v", r.ConfServer.Err)
+	}
+	if r.ConfHandler.Err != nil {
+		r.Logger.Error.Printf("load default config: %v", r.ConfHandler.Err)
 	}
 
-	r.log.File = filepath.Join("logs", "server.log")
+	r.Server.Addr = r.ConfServer.Host + ":" + strconv.Itoa(r.ConfServer.Port)
+	r.Server.ReadHeaderTimeout = r.ConfServer.Header
+	r.Server.ReadTimeout = r.ConfServer.Read
+	r.Server.WriteTimeout = r.ConfServer.Write
+	r.Server.IdleTimeout = r.ConfServer.Idle
+	r.Server.ErrorLog = r.Logger.Error
+	r.Server.Handler = r
 
-	if r.cfg.Err != nil {
-		r.log.Error.Printf("load default config: %v", r.cfg.Err)
-	}
 	return r
 }
 
-// HandlerFunc is a function type that implements the http.Handler interface.
-type HandlerFunc func(http.ResponseWriter, *http.Request)
+// Start
+func (r *Router) Start() error {
+	r.Logger.Info.Print("Start server")
+	r.Logger.Info.Printf("Listening on port %d", r.ConfServer.Port)
+	r.Logger.Info.Printf("Open http://%s in the browser", r.Server.Addr)
 
-func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	h(w, r)
+	err := r.ListenAndServe()
+	r.Logger.Error.Print(err)
+
+	return err
 }
 
-// HandleEntry
-func (r *Router) HandleEntry() {
-	for key, value := range r.cfg.Entry {
-		r.Handle(key, &Page{key, value})
-	}
+// Stop
+func (r *Router) Stop() {
+	r.Logger.Info.Print("Stop server")
 }
 
-// HandlePage
-func (r *Router) HandlePage(pattern string) {
-	if value, exist := r.cfg.Entry[pattern]; exist {
-		r.Handle(pattern, &Page{pattern, value})
-	}
+// Restart
+func (r *Router) Restart() {
+	r.Logger.Info.Print("Restart server")
+}
+
+// Address
+func (r *Router) Address() string {
+	return r.Server.Addr
+}
+
+// SetAddress
+func (r *Router) SetAddress(addr string) {
+	r.Server.Addr = addr
 }
 
 // HandleFile initializes http.FileServer, that will handle
@@ -78,6 +104,20 @@ func (r *Router) Open(path string) (file http.File, err error) {
 		}
 	}
 	return
+}
+
+// HandleEntry
+func (r *Router) HandleEntry() {
+	for key, value := range r.Entry {
+		r.Handle(key, &Page{key, value})
+	}
+}
+
+// HandlePage
+func (r *Router) HandlePage(pattern string) {
+	if value, exist := r.Entry[pattern]; exist {
+		r.Handle(pattern, &Page{pattern, value})
+	}
 }
 
 // GET
@@ -139,6 +179,6 @@ func (r *Router) HandleMethod(method string, pattern string, handler http.Handle
 	case http.MethodOptions:
 	case http.MethodTrace:
 	default:
-		r.log.Error.Printf("wrong method: %s", method)
+		r.Error.Printf("wrong method: %s", method)
 	}
 }

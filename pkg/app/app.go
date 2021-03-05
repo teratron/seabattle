@@ -14,8 +14,8 @@ type Application interface {
 }
 
 type App struct {
-	srv *server.Server
-	cfg *config.App
+	srv *server.Router
+	cfg *config.ConfApp
 	log *logger.Logger
 	mu  sync.Mutex
 }

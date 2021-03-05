@@ -2,7 +2,7 @@ common:
   lang: en
   theme: light
   meta:
-    description: Sea Battle - multiplayer online game
+    description: Sea Battle - Multiplayer Online Game
     author: Oleg Alexandrov
     keyword: SeaBattle,Sea,Battle,Multiplayer,Online,Game
     robots: index, follow

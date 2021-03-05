@@ -7,7 +7,7 @@ import (
 	"github.com/teratron/seabattle/pkg/api"
 )
 
-type Handler struct {
+type ConfHandler struct {
 	file string
 	Err  error `json:"-" yaml:"-"`
 
@@ -28,8 +28,7 @@ type Page struct {
 }
 
 type Data struct {
-	*Common `json:"-" yaml:"-"`
-
+	*Common  `json:"common,omitempty" yaml:"common,omitempty"`
 	Title    string            `json:"title" yaml:"title"`
 	AttrHTML map[string]string `json:"attrHTML" yaml:"attrHTML"` // List of attributes attached to the <html> tag
 	AttrBody map[string]string `json:"attrBody" yaml:"attrBody"` // List of attributes attached to the <body> tag
@@ -44,8 +43,8 @@ func NewPage() *Page {
 }
 
 // NewHandler
-func NewHandler() *Handler {
-	cfg := &Handler{
+func NewHandler() *ConfHandler {
+	cfg := &ConfHandler{
 		file: filepath.Join("configs", "handler.yml"),
 		Common: &Common{
 			Lang:  "en",
@@ -79,6 +78,6 @@ func NewHandler() *Handler {
 	return cfg
 }
 
-func (cfg *Handler) Decode(decoder api.Decoder) error {
+func (cfg *ConfHandler) Decode(decoder api.Decoder) error {
 	return decoder.Decode(cfg)
 }
