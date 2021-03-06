@@ -21,7 +21,7 @@ func (j *JSONFile) Decode(d Decoder) error {
 
 // Encode
 func (j *JSONFile) Encode(e Encoder) error {
-	file, err := os.OpenFile(j.File, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	file, err := os.OpenFile(j.File, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err == nil {
 		defer func() { err = file.Close() }()
 		err = json.NewEncoder(file).Encode(e)

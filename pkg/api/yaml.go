@@ -22,7 +22,7 @@ func (y *YAMLFile) Decode(d Decoder) error {
 
 // Encode
 func (y *YAMLFile) Encode(e Encoder) error {
-	file, err := os.OpenFile(y.File, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0666)
+	file, err := os.OpenFile(y.File, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err == nil {
 		defer func() { err = file.Close() }()
 		err = yaml.NewEncoder(file).Encode(e)
