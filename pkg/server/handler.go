@@ -33,7 +33,7 @@ func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			var s string
 			for k, v := range m {
 				if len(v) > 0 {
-					s += fmt.Sprintf(` %s="%s"`, k, v)
+					s += fmt.Sprintf(" %s=%s", k, template.HTMLEscapeString(v))
 				}
 			}
 			return template.HTMLAttr(s)
