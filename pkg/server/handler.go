@@ -36,7 +36,7 @@ func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					s += fmt.Sprintf(" %s=%s", k, template.HTMLEscapeString(v))
 				}
 			}
-			return template.HTMLAttr(s)
+			return (template.HTMLAttr)(s)
 		},
 		"attr": func(s string) template.HTMLAttr {
 			return template.HTMLAttr(s)
