@@ -39,19 +39,19 @@ func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return (template.HTMLAttr)(s)
 		},
 		"attr": func(s string) template.HTMLAttr {
-			return template.HTMLAttr(s)
+			return (template.HTMLAttr)(s)
 		},
 		"safe": func(s string) template.HTML {
-			return template.HTML(s)
+			return (template.HTML)(s)
 		},
 		"url": func(s string) template.URL {
-			return template.URL(s)
+			return (template.URL)(s)
 		},
 		"css": func(s string) template.CSS {
-			return template.CSS(s)
+			return (template.CSS)(s)
 		},
 		"js": func(s string) template.JS {
-			return template.JS(s)
+			return (template.JS)(s)
 		},
 	}
 
