@@ -27,7 +27,6 @@ func New() *App {
 		cfg: config.NewApp(),
 		mu:  sync.Mutex{},
 	}
-
 	//app.log = app.srv.log
 
 	return app

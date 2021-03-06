@@ -28,7 +28,8 @@ type Page struct {
 }
 
 type Data struct {
-	*Common  `json:"common,omitempty" yaml:"common,omitempty"`
+	*Common `json:"-" yaml:"-"`
+
 	Title    string            `json:"title" yaml:"title"`
 	AttrHTML map[string]string `json:"attrHTML" yaml:"attrHTML"` // List of attributes attached to the <html> tag
 	AttrBody map[string]string `json:"attrBody" yaml:"attrBody"` // List of attributes attached to the <body> tag
@@ -48,7 +49,7 @@ func NewHandler() *ConfHandler {
 		file: filepath.Join("configs", "handler.yml"),
 		Common: &Common{
 			Lang:  "en",
-			Theme: "default",
+			Theme: "light",
 			Meta: map[string]string{
 				"robots": "index, follow",
 			},
