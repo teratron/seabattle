@@ -1,4 +1,4 @@
-package version
+package app
 
 // Version is the app-global version string,
 // which should be substituted with a real value during build.

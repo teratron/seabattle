@@ -5,12 +5,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/teratron/seabattle/pkg/server"
+	"github.com/teratron/seabattle/pkg/router"
 )
 
 func main() {
 	// New создаём новое приложение
-	srv := server.New()
+	srv := router.New()
 
 	srv.HandleEntry()
 	srv.HandleFunc("/test", test)

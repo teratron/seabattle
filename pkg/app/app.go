@@ -3,9 +3,8 @@ package app
 import (
 	"sync"
 
-	"github.com/teratron/seabattle/pkg/config"
 	"github.com/teratron/seabattle/pkg/logger"
-	"github.com/teratron/seabattle/pkg/server"
+	"github.com/teratron/seabattle/pkg/router"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -14,18 +13,19 @@ type Application interface {
 }
 
 type App struct {
-	srv *server.Router
-	cfg *config.ConfApp
-	log *logger.Logger
 	mu  sync.Mutex
+	srv *router.Router
+	log *logger.Logger
+	cfg *Config
 }
 
 // New
 func New() *App {
 	app := &App{
-		srv: server.New(),
-		cfg: config.NewApp(),
 		mu:  sync.Mutex{},
+		srv: router.New(),
+		log: logger.New(),
+		cfg: NewConfig(),
 	}
 	//app.log = app.srv.log
 

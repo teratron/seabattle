@@ -1,21 +1,35 @@
-package config
+package router
 
 import (
 	"html/template"
 	"path/filepath"
+	"time"
 
 	"github.com/teratron/seabattle/pkg/api"
 )
 
-type ConfHandler struct {
+type Config struct {
 	file string
 	Err  error `json:"-" yaml:"-"`
 
-	*Common `json:"common" yaml:"common"`
-	Entry   map[string]*Page `json:"entry" yaml:"entry"`
+	// Server
+	Host     string `json:"host" yaml:"host"`
+	Port     int    `json:"port" yaml:"port"`
+	*Timeout `json:"timeout" yaml:"timeout"`
+
+	// Handlers
+	*Commons `json:"commons" yaml:"commons"`
+	Entry    map[string]*Page `json:"entry" yaml:"entry"`
 }
 
-type Common struct {
+type Timeout struct {
+	Header time.Duration `json:"header" yaml:"header"`
+	Read   time.Duration `json:"read" yaml:"read"`
+	Write  time.Duration `json:"write" yaml:"write"`
+	Idle   time.Duration `json:"idle" yaml:"idle"`
+}
+
+type Commons struct {
 	Lang  string                  `json:"lang" yaml:"lang"`
 	Theme string                  `json:"theme" yaml:"theme"`
 	Meta  map[string]string       `json:"meta" yaml:"meta"`
@@ -23,31 +37,39 @@ type Common struct {
 }
 
 type Page struct {
-	*Data `json:"data" yaml:"data"`
-	Files []string `json:"files" yaml:"files"`
+	*Data   `json:"data" yaml:"data"`
+	Files   []string `json:"files" yaml:"files"`
+	pattern string
 }
 
 type Data struct {
-	*Common `json:"-" yaml:"-"`
+	*Commons `json:"-" yaml:"-"`
+	params   Parameter
 
 	Title    string            `json:"title" yaml:"title"`
 	AttrHTML map[string]string `json:"attrHTML" yaml:"attrHTML"` // List of attributes attached to the <html> tag
 	AttrBody map[string]string `json:"attrBody" yaml:"attrBody"` // List of attributes attached to the <body> tag
 
 	//Extra Configurator `json:"extra,omitempty" yaml:"extra,omitempty"`
+	//Param Parameter
 }
 
-// NewPage
-func NewPage() *Page {
-	p := &Page{}
-	return p
+type Parameter interface {
 }
 
-// NewHandler
-func NewHandler() *ConfHandler {
-	cfg := &ConfHandler{
-		file: filepath.Join("configs", "handler.yml"),
-		Common: &Common{
+// NewConfig
+func NewConfig() *Config {
+	cfg := &Config{
+		file: filepath.Join("configs", "router.yml"),
+		Host: "localhost",
+		Port: 8080,
+		Timeout: &Timeout{
+			Header: 30 * time.Second,
+			Read:   15 * time.Second,
+			Write:  10 * time.Second,
+			Idle:   5 * time.Second,
+		},
+		Commons: &Commons{
 			Lang:  "en",
 			Theme: "light",
 			Meta: map[string]string{
@@ -66,8 +88,9 @@ func NewHandler() *ConfHandler {
 	if err, ok := file.(*api.FileError); !ok {
 		cfg.Err = cfg.Decode(file)
 		if cfg.Err == nil {
-			for _, value := range cfg.Entry {
-				value.Common = cfg.Common
+			for key, value := range cfg.Entry {
+				value.pattern = key
+				value.Commons = cfg.Commons
 				for i, file := range value.Files {
 					value.Files[i] = filepath.Join("web", "template", file)
 				}
@@ -76,9 +99,16 @@ func NewHandler() *ConfHandler {
 	} else {
 		cfg.Err = err.Err
 	}
+
 	return cfg
 }
 
-func (cfg *ConfHandler) Decode(decoder api.Decoder) error {
+// NewPage
+func NewPage() *Page {
+	p := &Page{}
+	return p
+}
+
+func (cfg *Config) Decode(decoder api.Decoder) error {
 	return decoder.Decode(cfg)
 }

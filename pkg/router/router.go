@@ -1,4 +1,4 @@
-package server
+package router
 
 import (
 	"net/http"
@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/teratron/seabattle/pkg/config"
 	"github.com/teratron/seabattle/pkg/logger"
 )
 
@@ -15,32 +14,27 @@ type Router struct {
 	http.ServeMux
 	http.FileSystem
 
-	*config.ConfServer
-	*config.ConfHandler
+	*Config
 	*logger.Logger
 }
 
 // New
 func New() *Router {
 	r := &Router{
-		ConfServer:  config.NewServer(),
-		ConfHandler: config.NewHandler(),
-		Logger:      logger.New(),
+		Config: NewConfig(),
+		Logger: logger.New(),
 	}
 	r.Logger.File = filepath.Join("logs", "server.log")
 
-	if r.ConfServer.Err != nil {
-		r.Logger.Error.Printf("load default config: %v", r.ConfServer.Err)
-	}
-	if r.ConfHandler.Err != nil {
-		r.Logger.Error.Printf("load default config: %v", r.ConfHandler.Err)
+	if r.Config.Err != nil {
+		r.Logger.Error.Printf("load default config: %v", r.Config.Err)
 	}
 
-	r.Server.Addr = r.ConfServer.Host + ":" + strconv.Itoa(r.ConfServer.Port)
-	r.Server.ReadHeaderTimeout = r.ConfServer.Header
-	r.Server.ReadTimeout = r.ConfServer.Read
-	r.Server.WriteTimeout = r.ConfServer.Write
-	r.Server.IdleTimeout = r.ConfServer.Idle
+	r.Server.Addr = r.Config.Host + ":" + strconv.Itoa(r.Config.Port)
+	r.Server.ReadHeaderTimeout = r.Config.Header
+	r.Server.ReadTimeout = r.Config.Read
+	r.Server.WriteTimeout = r.Config.Write
+	r.Server.IdleTimeout = r.Config.Idle
 	r.Server.ErrorLog = r.Logger.Error
 	r.Server.Handler = r
 
@@ -50,7 +44,7 @@ func New() *Router {
 // Start
 func (r *Router) Start() error {
 	r.Logger.Info.Print("Start server")
-	r.Logger.Info.Printf("Listening on port %d", r.ConfServer.Port)
+	r.Logger.Info.Printf("Listening on port %d", r.Config.Port)
 	r.Logger.Info.Printf("Open http://%s in the browser", r.Server.Addr)
 
 	err := r.ListenAndServe()
@@ -62,11 +56,6 @@ func (r *Router) Start() error {
 // Stop
 func (r *Router) Stop() {
 	r.Logger.Info.Print("Stop server")
-}
-
-// Restart
-func (r *Router) Restart() {
-	r.Logger.Info.Print("Restart server")
 }
 
 // Address
@@ -109,14 +98,14 @@ func (r *Router) Open(path string) (file http.File, err error) {
 // HandleEntry
 func (r *Router) HandleEntry() {
 	for key, value := range r.Entry {
-		r.Handle(key, &Page{key, value})
+		r.Handle(key, value)
 	}
 }
 
 // HandlePage
 func (r *Router) HandlePage(pattern string) {
 	if value, exist := r.Entry[pattern]; exist {
-		r.Handle(pattern, &Page{pattern, value})
+		r.Handle(pattern, value)
 	}
 }
 

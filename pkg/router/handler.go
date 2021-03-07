@@ -1,12 +1,10 @@
-package server
+package router
 
 import (
 	"fmt"
 	"html/template"
 	"net/http"
 	"path/filepath"
-
-	"github.com/teratron/seabattle/pkg/config"
 )
 
 // HandlerFunc is a function type that implements the http.Handler interface.
@@ -14,12 +12,6 @@ type HandlerFunc func(http.ResponseWriter, *http.Request)
 
 func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h(w, r)
-}
-
-// Page
-type Page struct {
-	pattern string
-	*config.Page
 }
 
 func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
