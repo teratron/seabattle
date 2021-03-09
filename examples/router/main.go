@@ -14,7 +14,7 @@ func main() {
 
 	srv.HandleEntry()
 	srv.HandleFunc("/test", test)
-	srv.HandleFile("./web/static")
+	//srv.HandleFile("./web/static")
 
 	// Run запускает приложение
 	log.Fatal(srv.Start())

@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"html/template"
 	"path/filepath"
 	"time"
@@ -19,7 +20,9 @@ type Config struct {
 
 	// Handlers
 	*Commons `json:"commons" yaml:"commons"`
-	Entry    map[string]*Page `json:"entry" yaml:"entry"`
+	//Entry    map[string]*Page `json:"entry" yaml:"entry"`
+
+	Entry map[string]*Pattern `json:"entry" yaml:"entry"`
 }
 
 type Timeout struct {
@@ -36,7 +39,9 @@ type Commons struct {
 	Path  map[string]template.URL `json:"path" yaml:"path"` // List of static path (img, css, js & etc)
 }
 
-type Page struct {
+type Pattern map[string]interface{}
+
+/*type Page struct {
 	*Data   `json:"data" yaml:"data"`
 	Files   []string `json:"files" yaml:"files"`
 	pattern string
@@ -49,13 +54,10 @@ type Data struct {
 	Title    string            `json:"title" yaml:"title"`
 	AttrHTML map[string]string `json:"attrHTML" yaml:"attrHTML"` // List of attributes attached to the <html> tag
 	AttrBody map[string]string `json:"attrBody" yaml:"attrBody"` // List of attributes attached to the <body> tag
-
-	//Extra Configurator `json:"extra,omitempty" yaml:"extra,omitempty"`
-	//Param Parameter
 }
 
 type Parameter interface {
-}
+}*/
 
 // NewConfig
 func NewConfig() *Config {
@@ -81,20 +83,63 @@ func NewConfig() *Config {
 				"js":  "../static/js/",
 			},
 		},
-		Entry: make(map[string]*Page),
+		//Entry: make(map[string]*Page),
+		//Entry: make(map[string]*Pattern),
+		Entry: map[string]*Pattern{
+			"/": {
+				"data": map[string]interface{}{
+					"title": "Home",
+					"attrBody": map[string]string{
+						"id":    "home",
+						"class": "base",
+					},
+				},
+				"files": []string{
+					"page.home.tmpl",
+					"partial.header.tmpl",
+				},
+			},
+		},
 	}
+	e := *cfg.Entry["/"]
+	ee := e["data"].(map[string]interface{})
+	fmt.Println(ee["title"])
 
 	file := api.GetFileType(cfg.file)
 	if err, ok := file.(*api.FileError); !ok {
 		cfg.Err = cfg.Decode(file)
 		if cfg.Err == nil {
-			for key, value := range cfg.Entry {
+			/*for key, value := range cfg.Entry {
 				value.pattern = key
 				value.Commons = cfg.Commons
 				for i, file := range value.Files {
 					value.Files[i] = filepath.Join("web", "template", file)
 				}
-			}
+			}*/
+			//fmt.Println(cfg.Entry["/"])
+			/*if val, ok := cfg.Entry["/"]; ok {
+				if va, ok := val["data"].(*Pattern); ok {
+					fmt.Println(va)
+				}
+
+			}*/
+			//for key, value := range cfg.Entry {
+			/*if val, ok := value["data"].(*Pattern); ok {
+				fmt.Println(val)
+			}*/
+
+			//fmt.Printf("%s: %T - %v\n", key, value, value)
+			//if val, ok := value.(interface{}); ok {
+			//fmt.Println(key, ":")
+			/*for k, v := range *value {
+				//fmt.Printf("%s: %T - %v\n\n", k, v, v)
+				fmt.Println(k, v)
+			}*/
+			//}
+
+			//value.pattern = key
+
+			//}
 		}
 	} else {
 		cfg.Err = err.Err
@@ -103,12 +148,6 @@ func NewConfig() *Config {
 	return cfg
 }
 
-// NewPage
-func NewPage() *Page {
-	p := &Page{}
-	return p
-}
-
-func (cfg *Config) Decode(decoder api.Decoder) error {
-	return decoder.Decode(cfg)
+func (cfg *Config) Decode(data interface{}) error {
+	return data.(api.Decoder).Decode(cfg)
 }

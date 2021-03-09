@@ -98,14 +98,7 @@ func (r *Router) Open(path string) (file http.File, err error) {
 // HandleEntry
 func (r *Router) HandleEntry() {
 	for key, value := range r.Entry {
-		r.Handle(key, value)
-	}
-}
-
-// HandlePage
-func (r *Router) HandlePage(pattern string) {
-	if value, exist := r.Entry[pattern]; exist {
-		r.Handle(pattern, value)
+		r.Handle(key, &page{key, value})
 	}
 }
 

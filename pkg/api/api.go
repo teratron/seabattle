@@ -11,16 +11,16 @@ type DecodeEncoder interface {
 }
 
 type Decoder interface {
-	Decode(Decoder) error
+	Decode(interface{}) error
 }
 
 type Encoder interface {
-	Encode(Encoder) error
+	Encode(interface{}) error
 }
 
 type FileError struct {
-	Err error
 	DecodeEncoder
+	Err error
 }
 
 func (f FileError) Error() string {
@@ -31,9 +31,9 @@ func GetFileType(file string) DecodeEncoder {
 	ext := filepath.Base(filepath.Ext(file))
 	switch ext {
 	case ".json":
-		return &JSONFile{File: file}
+		return &JSONFile{file}
 	case ".yml":
-		return &YAMLFile{File: file}
+		return &YAMLFile{file}
 	default:
 		return &FileError{Err: fmt.Errorf("extension isn't defined: %s", ext)}
 	}

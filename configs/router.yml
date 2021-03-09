@@ -48,4 +48,4 @@ entry:
       - partial.nav.tmpl
       - layout.base.tmpl
 
-  /web/static/:
+  #/web/static/:
