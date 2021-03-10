@@ -68,6 +68,17 @@ func (r *Router) SetAddress(addr string) {
 	r.Server.Addr = addr
 }
 
+// HandleEntry
+func (r *Router) HandleEntry() {
+	for key, value := range r.Entry {
+		if l := len(key); key[l-1:] == "/" && l > 1 {
+			r.HandleFile("")
+		} else {
+			r.Handle(key, value)
+		}
+	}
+}
+
 // HandleFile initializes http.FileServer, that will handle
 // HTTP-requests to static files from a folder (for example: "./web/static").
 // Use the Handle() function to register a handler for all requests
@@ -93,13 +104,6 @@ func (r *Router) Open(path string) (file http.File, err error) {
 		}
 	}
 	return
-}
-
-// HandleEntry
-func (r *Router) HandleEntry() {
-	for key, value := range r.Entry {
-		r.Handle(key, &page{key, value})
-	}
 }
 
 // GET

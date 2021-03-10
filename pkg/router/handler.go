@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -11,18 +12,19 @@ func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	h(w, r)
 }
 
-type page struct {
-	pattern string
-	*Pattern
-}
-
-func (p *page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != p.pattern {
+func (p Pattern) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != p["pattern"] {
 		http.NotFound(w, r)
 		return
 	}
+	//var f = p["files"].([]interface{})[0]
+	//fmt.Println(f[0])
+	//fmt.Printf("%T %v", p["files"].([]interface{})[0], p["files"].([]interface{})[0])
+	//fmt.Printf("%T %v", p["data"].(map[interface{}]interface{})["title"], p["data"].(map[interface{}]interface{})["title"])
+	if files, ok := p["files"].([]interface{}); ok {
+		fmt.Println(files)
+	}
 
-	//p.Pattern[p.pattern].()
 	/*funcMap := template.FuncMap{
 		"attrMap": func(m map[string]string) template.HTMLAttr {
 			var s string
@@ -50,7 +52,7 @@ func (p *page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	err := template.Must(template.New(filepath.Base(p.Files[0])).Funcs(funcMap).ParseFiles(p.Files...)).Execute(w, p.Data)
+	err := template.Must(template.New(filepath.Base(p["files"].([]interface{})[0].(string))).Funcs(funcMap).ParseFiles(p["files"]...)).Execute(w, p["data"].(map[interface{}]interface{}))
 	if err != nil {
 		_, err = fmt.Fprintf(w, err.Error())
 	}*/

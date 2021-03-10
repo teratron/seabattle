@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"html/template"
 	"path/filepath"
 	"time"
@@ -22,7 +21,7 @@ type Config struct {
 	*Commons `json:"commons" yaml:"commons"`
 	//Entry    map[string]*Page `json:"entry" yaml:"entry"`
 
-	Entry map[string]*Pattern `json:"entry" yaml:"entry"`
+	Entry map[string]Pattern `json:"entry" yaml:"entry"`
 }
 
 type Timeout struct {
@@ -84,9 +83,10 @@ func NewConfig() *Config {
 			},
 		},
 		//Entry: make(map[string]*Page),
-		//Entry: make(map[string]*Pattern),
-		Entry: map[string]*Pattern{
+		Entry: make(map[string]Pattern),
+		/*Entry: map[string]Pattern{
 			"/": {
+				"pattern": "/",
 				"data": map[string]interface{}{
 					"title": "Home",
 					"attrBody": map[string]string{
@@ -99,11 +99,8 @@ func NewConfig() *Config {
 					"partial.header.tmpl",
 				},
 			},
-		},
+		},*/
 	}
-	e := *cfg.Entry["/"]
-	ee := e["data"].(map[string]interface{})
-	fmt.Println(ee["title"])
 
 	file := api.GetFileType(cfg.file)
 	if err, ok := file.(*api.FileError); !ok {
@@ -116,30 +113,20 @@ func NewConfig() *Config {
 					value.Files[i] = filepath.Join("web", "template", file)
 				}
 			}*/
-			//fmt.Println(cfg.Entry["/"])
-			/*if val, ok := cfg.Entry["/"]; ok {
-				if va, ok := val["data"].(*Pattern); ok {
-					fmt.Println(va)
+			for key, value := range cfg.Entry {
+				if value == nil {
+					value = make(Pattern)
 				}
+				value["pattern"] = key
 
-			}*/
-			//for key, value := range cfg.Entry {
-			/*if val, ok := value["data"].(*Pattern); ok {
-				fmt.Println(val)
-			}*/
-
-			//fmt.Printf("%s: %T - %v\n", key, value, value)
-			//if val, ok := value.(interface{}); ok {
-			//fmt.Println(key, ":")
-			/*for k, v := range *value {
-				//fmt.Printf("%s: %T - %v\n\n", k, v, v)
-				fmt.Println(k, v)
-			}*/
-			//}
-
-			//value.pattern = key
-
-			//}
+				if files, exist := value["files"].([]interface{}); exist {
+					for i, f := range files {
+						files[i] = filepath.Join("web", "template", f.(string))
+						//fmt.Println(i,files[i])
+					}
+				}
+			}
+			//fmt.Println(cfg.Entry)
 		}
 	} else {
 		cfg.Err = err.Err
