@@ -72,7 +72,7 @@ func (r *Router) SetAddress(addr string) {
 func (r *Router) HandleEntry() {
 	for key, value := range r.Entry {
 		if l := len(key); key[l-1:] == "/" && l > 1 {
-			r.HandleFile("")
+			r.HandleFile(key)
 		} else {
 			r.Handle(key, value)
 		}
@@ -83,11 +83,11 @@ func (r *Router) HandleEntry() {
 // HTTP-requests to static files from a folder (for example: "./web/static").
 // Use the Handle() function to register a handler for all requests
 // that start with the pattern  (for example: "/static/").
-func (r *Router) HandleFile(path string) {
-	r.FileSystem = http.Dir(path)
-	pattern := "/" + filepath.Base(path)
-	r.Handle(pattern, http.NotFoundHandler())
-	r.Handle(pattern+"/", http.StripPrefix(pattern, http.FileServer(r)))
+func (r *Router) HandleFile(pattern string) {
+	r.FileSystem = http.Dir("." + filepath.Dir(pattern))
+	pattern = "/" + filepath.Base(pattern)
+	r.Handle(pattern, http.NotFoundHandler())                            //  /static
+	r.Handle(pattern+"/", http.StripPrefix(pattern, http.FileServer(r))) // /static/
 }
 
 // Open makes the Server implement the http.FileSystem interface.
