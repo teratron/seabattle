@@ -35,7 +35,7 @@ func New() *App {
 // Server
 func (app *App) Server() {
 	app.srv.HandleEntry()
-	app.srv.HandleFile("./web/static")
+	app.srv.HandleStatic("./web/static")
 }
 
 // Run

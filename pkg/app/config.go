@@ -3,7 +3,7 @@ package app
 import (
 	"path/filepath"
 
-	"github.com/teratron/seabattle/pkg/api"
+	"github.com/teratron/seabattle/pkg/utils"
 )
 
 type Config struct {
@@ -37,8 +37,8 @@ func NewConfig() *Config {
 		},
 	}
 
-	file := api.GetFileType(cfg.file)
-	if err, ok := file.(*api.FileError); !ok {
+	file := utils.GetFileType(cfg.file)
+	if err, ok := file.(*utils.FileError); !ok {
 		cfg.Err = cfg.Decode(file)
 	} else {
 		cfg.Err = err.Err
@@ -46,6 +46,6 @@ func NewConfig() *Config {
 	return cfg
 }
 
-func (cfg *Config) Decode(decoder api.Decoder) error {
+func (cfg *Config) Decode(decoder utils.Decoder) error {
 	return decoder.Decode(cfg)
 }

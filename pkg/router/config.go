@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/teratron/seabattle/pkg/api"
+	"github.com/teratron/seabattle/pkg/utils"
 )
 
 type Config struct {
@@ -78,8 +78,8 @@ func NewConfig() *Config {
 		//Entry: make(map[string]*Page),
 	}
 
-	file := api.GetFileType(cfg.file)
-	if err, ok := file.(*api.FileError); !ok {
+	file := utils.GetFileType(cfg.file)
+	if err, ok := file.(*utils.FileError); !ok {
 		cfg.Err = cfg.Decode(file)
 		if cfg.Err == nil {
 			for key, value := range cfg.Entry {
@@ -100,5 +100,5 @@ func NewConfig() *Config {
 }
 
 func (cfg *Config) Decode(data interface{}) error {
-	return data.(api.Decoder).Decode(cfg)
+	return data.(utils.Decoder).Decode(cfg)
 }

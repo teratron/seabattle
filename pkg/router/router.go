@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/teratron/seabattle/pkg/logger"
 )
@@ -71,23 +72,26 @@ func (r *Router) SetAddress(addr string) {
 // HandleEntry
 func (r *Router) HandleEntry() {
 	for key, value := range r.Entry {
-		if l := len(key); key[l-1:] == "/" && l > 1 {
-			r.HandleFile(key)
+		if strings.HasPrefix(key, "./") {
+			r.HandleStatic(key)
 		} else {
 			r.Handle(key, value)
+			if len(key) > 0 {
+				r.Handle(key+"/", value)
+			}
 		}
 	}
 }
 
-// HandleFile initializes http.FileServer, that will handle
+// HandleStatic initializes http.FileServer, that will handle
 // HTTP-requests to static files from a folder (for example: "./web/static").
 // Use the Handle() function to register a handler for all requests
 // that start with the pattern  (for example: "/static/").
-func (r *Router) HandleFile(pattern string) {
-	r.FileSystem = http.Dir("." + filepath.Dir(pattern))
+func (r *Router) HandleStatic(pattern string) {
+	r.FileSystem = http.Dir(pattern)
 	pattern = "/" + filepath.Base(pattern)
-	r.Handle(pattern, http.NotFoundHandler())                            //  /static
-	r.Handle(pattern+"/", http.StripPrefix(pattern, http.FileServer(r))) // /static/
+	r.Handle(pattern, http.NotFoundHandler())
+	r.Handle(pattern+"/", http.StripPrefix(pattern, http.FileServer(r)))
 }
 
 // Open makes the Server implement the http.FileSystem interface.

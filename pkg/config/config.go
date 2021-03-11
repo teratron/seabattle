@@ -3,11 +3,11 @@ package config
 import (
 	"path/filepath"
 
-	"github.com/teratron/seabattle/pkg/api"
+	"github.com/teratron/seabattle/pkg/utils"
 )
 
 type Configurator interface {
-	api.Decoder
+	utils.Decoder
 }
 
 type Config struct {

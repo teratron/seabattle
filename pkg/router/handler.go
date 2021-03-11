@@ -15,10 +15,10 @@ func (h HandlerFunc) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p *Page) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != p.pattern /*&& p.pattern == "/"*/ {
+	/*if r.URL.Path != p.pattern {
 		http.NotFound(w, r)
 		return
-	}
+	}*/
 
 	funcMap := template.FuncMap{
 		"attrMap": func(m map[string]string) template.HTMLAttr {
