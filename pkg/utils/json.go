@@ -5,13 +5,13 @@ import (
 	"os"
 )
 
-type JSONFile struct {
+type FileJSON struct {
 	file string
 }
 
 // Decode
-func (j *JSONFile) Decode(data interface{}) error {
-	file, err := os.OpenFile(j.file, os.O_RDONLY, 0666)
+func (j *FileJSON) Decode(data interface{}) error {
+	file, err := os.OpenFile(j.file, os.O_RDONLY, 0600)
 	if err == nil {
 		defer func() { err = file.Close() }()
 		err = json.NewDecoder(file).Decode(data)
@@ -20,7 +20,7 @@ func (j *JSONFile) Decode(data interface{}) error {
 }
 
 // Encode
-func (j *JSONFile) Encode(data interface{}) error {
+func (j *FileJSON) Encode(data interface{}) error {
 	file, err := os.OpenFile(j.file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err == nil {
 		defer func() { err = file.Close() }()

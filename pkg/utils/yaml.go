@@ -6,7 +6,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type YAMLFile struct {
+type FileYAML struct {
 	file string
 }
 
@@ -32,8 +32,8 @@ func (y *YAMLFile) UnmarshalYAML(unmarshal func(interface{}) error) error {
 }*/
 
 // Decode
-func (y *YAMLFile) Decode(data interface{}) error {
-	file, err := os.OpenFile(y.file, os.O_RDONLY, 0666)
+func (y *FileYAML) Decode(data interface{}) error {
+	file, err := os.OpenFile(y.file, os.O_RDONLY, 0600)
 	if err == nil {
 		defer func() { err = file.Close() }()
 		err = yaml.NewDecoder(file).Decode(data)
@@ -42,7 +42,7 @@ func (y *YAMLFile) Decode(data interface{}) error {
 }
 
 // Encode
-func (y *YAMLFile) Encode(data interface{}) error {
+func (y *FileYAML) Encode(data interface{}) error {
 	file, err := os.OpenFile(y.file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err == nil {
 		defer func() { err = file.Close() }()

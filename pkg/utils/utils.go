@@ -31,9 +31,9 @@ func GetFileType(file string) DecodeEncoder {
 	ext := filepath.Base(filepath.Ext(file))
 	switch ext {
 	case ".json":
-		return &JSONFile{file}
+		return &FileJSON{file}
 	case ".yml":
-		return &YAMLFile{file}
+		return &FileYAML{file}
 	default:
 		return &FileError{Err: fmt.Errorf("extension isn't defined: %s", ext)}
 	}
