@@ -1,4 +1,4 @@
-package utils
+package util
 
 import (
 	"os"
@@ -7,7 +7,7 @@ import (
 )
 
 type FileYAML struct {
-	file string
+	name string
 }
 
 /*var Unmarshal = func(data interface{}) error {
@@ -33,7 +33,7 @@ func (y *YAMLFile) UnmarshalYAML(unmarshal func(interface{}) error) error {
 
 // Decode
 func (y *FileYAML) Decode(data interface{}) error {
-	file, err := os.OpenFile(y.file, os.O_RDONLY, 0600)
+	file, err := os.OpenFile(y.name, os.O_RDONLY, 0600)
 	if err == nil {
 		defer func() { err = file.Close() }()
 		err = yaml.NewDecoder(file).Decode(data)
@@ -43,7 +43,7 @@ func (y *FileYAML) Decode(data interface{}) error {
 
 // Encode
 func (y *FileYAML) Encode(data interface{}) error {
-	file, err := os.OpenFile(y.file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	file, err := os.OpenFile(y.name, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err == nil {
 		defer func() { err = file.Close() }()
 		err = yaml.NewEncoder(file).Encode(data)

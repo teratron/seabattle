@@ -21,8 +21,8 @@ fi
 
 # Disable C code, enable Go modules
 export CGO_ENABLED=0
-export GOARCH="${ARCH}"
 export GOOS="${OS}"
+export GOARCH="${ARCH}"
 export GO111MODULE=on
 export GOFLAGS="-mod=vendor"
 

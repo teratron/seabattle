@@ -1,4 +1,4 @@
-package utils
+package util
 
 import (
 	"fmt"
@@ -27,12 +27,12 @@ func (f FileError) Error() string {
 	return fmt.Sprintf("file type error: %v\n", f.Err)
 }
 
-func GetFileType(file string) DecodeEncoder {
-	ext := filepath.Base(filepath.Ext(file))
+func GetFileType(file string) Decoder {
+	ext := filepath.Ext(file)
 	switch ext {
 	case ".json":
 		return &FileJSON{file}
-	case ".yml":
+	case ".yml", ".yaml":
 		return &FileYAML{file}
 	default:
 		return &FileError{Err: fmt.Errorf("extension isn't defined: %s", ext)}
