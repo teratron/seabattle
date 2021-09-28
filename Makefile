@@ -1,3 +1,4 @@
+
 # The binaries to build (just the basenames).
 BINARY_NAMES := seabattle
 
@@ -21,23 +22,20 @@ ARCH := $(if $(GOARCH),$(GOARCH),$(shell go env GOARCH))
 TAG := $(VERSION)__$(OS)_$(ARCH)
 
 BASE_IMAGE ?= gcr.io/distroless/static
-BUILD_IMAGE ?= golang:1.16-alpine
+BUILD_IMAGE ?= golang:1.17-alpine
 
 BIN_EXTENSION :=
 	ifeq ($(OS), windows)
 		BIN_EXTENSION := .exe
 	endif
 
-# deps
-deps:
+deps: ## install deps
 	go get -u gopkg.in/yaml.v2
 	go get -u github.com/go-sql-driver/mysql
 	go mod tidy
 	go mod vendor
 
-
-# all: @HELP builds binaries for one platform ($OS/$ARCH)
-all: build
+all: build ## builds binaries for one platform ($OS/$ARCH)
 
 # For the following OS/ARCH expansions, we transform OS/ARCH into OS_ARCH
 # because make pattern rules don't match with embedded '/' characters.
@@ -59,14 +57,11 @@ push-%:
 	    GOOS=$(firstword $(subst _, ,$*)) \
 	    GOARCH=$(lastword $(subst _, ,$*))
 
-# all-build: @HELP builds binaries for all platforms
-all-build: $(addprefix build-, $(subst /,_, $(ALL_PLATFORMS)))
+all-build: $(addprefix build-, $(subst /,_, $(ALL_PLATFORMS))) ## builds binaries for all platforms
 
-# all-container: @HELP builds containers for all platforms
-all-container: $(addprefix container-, $(subst /,_, $(ALL_PLATFORMS)))
+all-container: $(addprefix container-, $(subst /,_, $(ALL_PLATFORMS))) ## builds containers for all platforms
 
-# all-push: @HELP pushes containers for all platforms to the defined registry
-all-push: $(addprefix push-, $(subst /,_, $(ALL_PLATFORMS)))
+all-push: $(addprefix push-, $(subst /,_, $(ALL_PLATFORMS))) ## pushes containers for all platforms to the defined registry
 
 # The following structure defeats Go's (intentional) behavior to always touch
 # result files, even if they have not changed. This will still run `go` but
@@ -104,8 +99,7 @@ $(STAMPS): go-build
 	    date >$@;                               \
 	fi
 
-# go-build: @HELP this runs the actual `go build` which updates all binaries
-go-build: $(BUILD_DIRS)
+go-build: $(BUILD_DIRS) ## this runs the actual `go build` which updates all binaries
 	@echo
 	@echo "building for $(OS)/$(ARCH)"
 	@docker run                                                 \
@@ -128,8 +122,7 @@ go-build: $(BUILD_DIRS)
 	    "
 
 # Example: make shell CMD="-c 'date > datefile'"
-# shell: @HELP launches a shell in the containerized build environment
-shell: $(BUILD_DIRS)
+shell: $(BUILD_DIRS) ## launches a shell in the containerized build environment
 	@echo "launching a shell in the containerized build environment"
 	@docker run                                                 \
 	    -ti                                                     \
@@ -147,11 +140,9 @@ shell: $(BUILD_DIRS)
 
 CONTAINER_DOTFILES = $(foreach bin,$(BINARY_NAMES),.container-$(subst /,_,$(REGISTRY)/$(bin))-$(TAG))
 
-# container: @HELP build container for one platform ($OS/$ARCH)
-# containers: @HELP builds containers for one platform ($OS/$ARCH)
-container containers: $(CONTAINER_DOTFILES)
-	@for bin in $(BINARY_NAMES); do                         \
-	    echo "container: $(REGISTRY)/$$bin:$(TAG)"; \
+container containers: $(CONTAINER_DOTFILES) ## build(s) container(s) for one platform ($OS/$ARCH)
+	@for bin in $(BINARY_NAMES);                       \
+		do echo "container: $(REGISTRY)/$$bin:$(TAG)"; \
 	done
 
 # Each container-dotfile target can reference a $(BIN) variable.
@@ -177,14 +168,12 @@ $(CONTAINER_DOTFILES):
 	@docker images -q $(REGISTRY)/$(BIN):$(TAG) > $@
 	@echo
 
-# push: @HELP pushes the container for one platform ($OS/$ARCH) to the defined registry
-push: $(CONTAINER_DOTFILES)
+push: $(CONTAINER_DOTFILES) ## pushes the container for one platform ($OS/$ARCH) to the defined registry
 	@for bin in $(BINARY_NAMES); do                    \
 	    docker push $(REGISTRY)/$$bin:$(TAG);  \
 	done
 
-# manifest-list: @HELP builds a manifest list of containers for all platforms
-manifest-list: all-push
+manifest-list: all-push ## builds a manifest list of containers for all platforms
 	@for bin in $(BINARY_NAMES); do                                   \
 	    platforms=$$(echo $(ALL_PLATFORMS) | sed 's/ /,/g');  \
 	    manifest-tool                                         \
@@ -195,12 +184,10 @@ manifest-list: all-push
 	        --template $(REGISTRY)/$$bin:$(VERSION)__OS_ARCH  \
 	        --target $(REGISTRY)/$$bin:$(VERSION)
 
-# version: @HELP outputs the version string
-version:
+version: ## outputs the version string
 	@echo $(VERSION)
 
-# test: @HELP runs tests, as defined in ./build/test.sh
-test: $(BUILD_DIRS)
+test: $(BUILD_DIRS) ## runs tests, as defined in ./build/test.sh
 	@docker run                                                 \
 	    -i                                                      \
 	    --rm                                                    \
@@ -223,16 +210,19 @@ test: $(BUILD_DIRS)
 $(BUILD_DIRS):
 	@mkdir -p $@
 
-# clean: @HELP removes built binaries and temporary files
-clean: container-clean bin-clean
+clean: container-clean bin-clean ## removes built binaries and temporary files
 
-container-clean:
+container-clean: ## removes temporary files
 	rm -rf .container-* .dockerfile-*
 
-bin-clean:
+bin-clean: ## removes built binaries
 	rm -rf .go bin
 
-# help: @HELP prints this message
+fmt: ## go fmt
+	$(call print-target)
+	go fmt ./...
+
+.PHONY: help
 help:
 	@echo "VARIABLES:"
 	@echo "  BINS = $(BINARY_NAMES)"
@@ -241,25 +231,39 @@ help:
 	@echo "  REGISTRY = $(REGISTRY)"
 	@echo
 	@echo "TARGETS:"
-	@grep -E '^.*: *@HELP' $(MAKEFILE_LIST)       \
-		| awk '                                   \
-			BEGIN {FS = ": *@HELP"};              \
-			{ printf "  %-20s %s\n", $$1, $$2 };  \
-		'
+	@awk '                                             \
+		BEGIN {FS = ":.*?## "}                         \
+		/^[a-zA-Z_-]+:.*?## /                          \
+		{printf "\033[36m%-16s\033[0m %s\n", $$1, $$2} \
+	'                                                  \
+	$(MAKEFILE_LIST)                                   \
 
-.PHONY: fmt
-fmt: ## go fmt
-	$(call print-target)
-	go fmt ./...
+.DEFAULT_GOAL := help
 
-.PHONY: help
-help2:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST)   \
-	| sort                                                \
-	| awk '                                               \
-		BEGIN {FS = ":.*?## "};                           \
-		{ printf "\033[36m%-30s\033[0m %s\n", $$1, $$2 }; \
-	'
+# help: @HELP prints this message
+#help:
+#	@echo "VARIABLES:"
+#	@echo "  BINS = $(BINARY_NAMES)"
+#	@echo "  OS = $(OS)"
+#	@echo "  ARCH = $(ARCH)"
+#	@echo "  REGISTRY = $(REGISTRY)"
+#	@echo
+#	@echo "TARGETS:"
+#	@grep -E '^.*: *@HELP' $(MAKEFILE_LIST)       \
+#		| awk '                                   \
+#			BEGIN {FS = ": *@HELP"};              \
+#			{ printf "  %-20s %s\n", $$1, $$2 };  \
+#		'
+
+#.PHONY: help2
+#help2:
+#	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST)   \
+#	| sort                                                \
+#	| awk '                                               \
+#		BEGIN {FS = ":.*?## "};                           \
+#		{printf "\033[36m%-30s\033[0m %s\n", $$1, $$2};   \
+#	'
+#.DEFAULT_GOAL := help2
 
 define print-target
     @printf "Executing target: \033[36m$@\033[0m\n"
