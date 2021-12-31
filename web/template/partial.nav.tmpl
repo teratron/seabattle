@@ -1,0 +1,6 @@
+{{ block "nav" . }}
+    <nav>
+        {{ if eq .AttrBody.id "home" }}<b>Home</b>{{ else }}<a href="/">Home</a>{{ end }}
+        {{ if eq .AttrBody.id "about" }}<b>About</b>{{ else }}<a href="/about">About</a>{{ end }}
+    </nav>
+{{ end }}

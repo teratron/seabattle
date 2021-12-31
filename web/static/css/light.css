@@ -1,0 +1,31 @@
+/***************************************
+  Root
+ ***************************************/
+:root {
+    /*** Color ***/
+    --color-background: white;
+
+    --color-primary: #18232d;
+    --color-primary-dark: #0E1419;
+    --color-primary-light: #969B9F;
+
+    --color-secondary: #25a5cc;
+    --color-secondary-dark: #155A70;
+    --color-secondary-light: #9BD6E7;
+
+    --color-accent: #725ac1;
+    --color-accent-dark: #3F326A;
+    --color-accent-light: #BEB4E2;
+
+    --color-success: #3fa34d;
+    --color-success-dark: #23592A;
+    --color-success-light: #A7D5AE;
+
+    --color-alret: #ea526f;
+    --color-alret-dark: #802D3D;
+    --color-alret-light: #F5B0BD;
+
+    --color-grey: #a2a8ad;
+    --color-grey-dark: #404345;
+    --color-grey-light: #ebf0f4;
+}

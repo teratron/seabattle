@@ -1,0 +1,19 @@
+{{ template "base" . }}
+{{ define "content" }}
+    {{ template "header" . }}
+    <main>
+
+        <img src="{{ .Path.img }}favicon/favicon.png" width="128" alt="favicon"/>
+
+        <section id="owner" class="sea">
+            {{/* range $i, $v := .Sea }}
+                <div id="{{ $i }}">{{ $v }}</div>
+            {{ end */}}
+        </section>
+
+        <section id="enemy" class="sea">
+        </section>
+
+    </main>
+    {{ template "footer" . }}
+{{ end }}

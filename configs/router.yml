@@ -1,0 +1,51 @@
+host: 127.0.0.1
+port: 8080
+timeout:
+  header: 0
+  read: 0
+  write: 0
+  idle: 0
+
+commons:
+  lang: en
+  theme: light
+  meta:
+    description: Sea Battle - Multiplayer Online Game
+    author: Oleg Alexandrov
+    keyword: SeaBattle,Sea,Battle,Multiplayer,Online,Game
+    robots: index, follow
+  path:
+    img: ../static/img/
+    css: ../static/css/
+    js:  ../static/js/
+
+entry:
+  /:
+    data:
+      title: Home
+      attrHTML: {}
+      attrBody:
+        id: home
+        class: base
+    files:
+      - page.home.tmpl
+      - partial.header.tmpl
+      - partial.footer.tmpl
+      - partial.nav.tmpl
+      - layout.base.tmpl
+
+  /about:
+    data:
+      title: About Us
+      attrHTML: {}
+      attrBody:
+        id: about
+        class: base
+    files:
+      - page.about.tmpl
+      - partial.header.tmpl
+      - partial.footer.tmpl
+      - partial.nav.tmpl
+      - layout.base.tmpl
+
+  ./web/static:
